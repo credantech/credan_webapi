@@ -1,0 +1,26 @@
+# springBoot注册监控
+spring:
+  application:
+    name: '@project.artifactId@(${spring.profiles.active} 环境)'
+    description: '@project.description@'
+    version: '@project.version@'
+    spring-boot-version: '@project.parent.version@'
+#  boot:
+#    admin:
+#      url: http://127.0.0.1:8008
+#      username: ${security.user.name}
+#      password: ${security.user.password}
+      
+# 默认全局权限      
+security:
+  user:
+    name: admin
+    password: credan88
+  ignored:
+    - /v1/**
+    
+# 管理配置    
+management:
+  security:
+    role: SUPERUSER
+  context-path: /manage
