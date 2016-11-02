@@ -19,7 +19,7 @@ build.sh
 *.log
 logs/*
 generator.out.xml
-generator.xml
+#generator.xml
 #pom.xml
 
 # Mobile Tools for Java (J2ME)
