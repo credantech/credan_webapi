@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<context id="Mysql" targetRuntime="MyBatis3" defaultModelType="flat">
+
+<!-- 		<plugin type="tk.mybatis.mapper.generator.MapperPlugin"> -->
+<!-- 			<property name="mappers" value="com.credan.webapi.config.mybatis.conf.MyBatisDao" /> -->
+<!-- 			caseSensitive默认false，当数据库表名区分大小写时，可以将该属性设置为true -->
+<!-- 			<property name="caseSensitive" value="true" /> -->
+<!-- 		</plugin> -->
+
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.10.200:3306/credan"
+			userId="credan_user" password="Credan888">
+		</jdbcConnection>
+
+		<javaModelGenerator targetPackage="com.credan.webapi.core.dao.entity"
+			targetProject="src/main/java">
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetPackage="mybatis.mappers.share" targetProject="src/main/resources" />
+
+		<javaClientGenerator targetPackage="com.credan.webapi.core.dao.mapper"
+			targetProject="src/main/java" type="XMLMAPPER" />
+
+		<table tableName="t_mobile_label" domainObjectName="MobileLabel"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
+<!-- 			<generatedKey column="id" sqlStatement="Mysql" identity="true" /> -->
+		</table>
+	</context>
+</generatorConfiguration>

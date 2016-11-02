@@ -20,7 +20,7 @@
 
 	<properties>
 		<!-- 依赖版本 -->
-		<mapper.version>3.3.6</mapper.version>
+		<mapper.version>3.3.9</mapper.version>
 		<!-- druid -->
 		<druid.version>1.0.20</druid.version>
 		<!-- guava -->
@@ -55,15 +55,15 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- springBoot 监控组件 begin -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-client</artifactId>
-			<version>1.3.2</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.boot</groupId> -->
+<!-- 			<artifactId>spring-boot-starter-security</artifactId> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>de.codecentric</groupId> -->
+<!-- 			<artifactId>spring-boot-admin-starter-client</artifactId> -->
+<!-- 			<version>1.3.2</version> -->
+<!-- 		</dependency> -->
 		<!-- springBoot 监控组件 end -->
 		<!-- springBoot 热部署 begin -->
 		<dependency>
@@ -97,18 +97,11 @@
 			<version>14.0.1</version>
 		</dependency>
 
-		<!--通用Mapper插件 -->
-		<dependency>
-			<groupId>tk.mybatis</groupId>
-			<artifactId>mapper</artifactId>
-			<version>3.3.4</version>
-		</dependency>
-
 		<!-- Mybatis Generator -->
 		<dependency>
 			<groupId>org.mybatis.generator</groupId>
 			<artifactId>mybatis-generator-core</artifactId>
-			<version>1.3.2</version>
+			<version>1.3.5</version>
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>

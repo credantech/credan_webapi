@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0.0, $Date: 2016年7月28日 下午1:54:54 $
  */
 @Component
-@ApplicationPath("/v1")
+@ApplicationPath("/api")
 public class JerseyConfig extends ResourceConfig {
 	public JerseyConfig() {
 		packages("com.credan.webapi.resource");
