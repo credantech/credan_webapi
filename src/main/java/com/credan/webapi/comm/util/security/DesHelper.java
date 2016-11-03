@@ -97,14 +97,14 @@ public final class DesHelper {
 		return  Base64Util.encodeBase64String(secretKey.getEncoded());
 	}
 	
-	public static void main(String[] args) throws Exception {
-		String initKey = initKey("122222");
-		System.err.println(initKey);
-		String stre = "abc";
-		String encrypt = encrypt(stre, initKey);
-		System.err.println(encrypt);
-		String decrypt = decrypt(encrypt, initKey);
-		System.err.println(decrypt);
-	}
+//	public static void main(String[] args) throws Exception {
+//		String initKey = initKey("122222");
+//		System.err.println(initKey);
+//		String stre = "abc";
+//		String encrypt = encrypt(stre, initKey);
+//		System.err.println(encrypt);
+//		String decrypt = decrypt(encrypt, initKey);
+//		System.err.println(decrypt);
+//	}
 
 }

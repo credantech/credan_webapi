@@ -25,7 +25,7 @@ public class AbstractBasicService {
 	 * 
 	 * @param objects
 	 */
-	protected static void checkNotNull(JSONObject param, String... keys) {
+	public static void checkNotNull(JSONObject param, String... keys) {
 		Function<String[], Boolean> function = new Function<String[], Boolean>() {
 			@Override
 			public Boolean apply(String[] arg0) {

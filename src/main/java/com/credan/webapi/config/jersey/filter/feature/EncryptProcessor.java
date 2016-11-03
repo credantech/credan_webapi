@@ -35,10 +35,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class EncryptProcessor implements ContainerRequestFilter {
-	
+
 	@Autowired
 	private SignService signService;
-	
+
 	@Override
 	public void filter(ContainerRequestContext arg0) throws IOException {
 		String param = null;
@@ -48,13 +48,9 @@ public class EncryptProcessor implements ContainerRequestFilter {
 			cr.bufferEntity();
 			param = cr.readEntity(String.class);
 			JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
-			// TODO 处理数据 params,解析data数据，待处理
-//			ResultVo result = signService.processParams(params);
-			params.put("merchantId", "111");
+			params = signService.processParams(params);
 			InputStream inputStream = new ByteArrayInputStream(params.toJSONString().getBytes(Charsets.UTF_8));
 			arg0.setEntityStream(inputStream);
-
-			System.err.println(params);
 		} catch (Exception e) {
 			log.error(this.getClass().getSimpleName() + ", param : {}", param);
 			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
