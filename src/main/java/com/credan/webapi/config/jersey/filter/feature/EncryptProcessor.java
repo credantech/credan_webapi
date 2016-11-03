@@ -21,7 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.Json;
 import com.credan.webapi.config.jersey.exception.ParamException;
-import com.credan.webapi.service.sign.SignService;
+import com.credan.webapi.core.service.security.SignService;
 import com.google.common.base.Charsets;
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,18 +1,21 @@
-package com.credan.webapi.service.sign;
+package com.credan.webapi.core.service.security;
 
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.DateHelper;
-import com.credan.webapi.comm.util.SignUtil;
+import com.credan.webapi.comm.util.security.DesHelper;
+import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.jersey.exception.ParamException;
-import com.credan.webapi.service.CredanBaseService;
+import com.credan.webapi.core.service.AbstractBasicService;
 
-public class SignService extends CredanBaseService{
+@Service
+public class SignService extends AbstractBasicService{
 	
 	@Value("${zlj_deskey}")
 	private String desKey;
@@ -32,13 +35,12 @@ public class SignService extends CredanBaseService{
 	@Value("${credan_public_key}")
 	private String credanPublicKey;
 	
-	public ResultVo processParams(JSONObject params) {
-		ResultVo resultVo = new ResultVo(false);
+	public JSONObject processParams(JSONObject params) {
 		try {
 			String data = params.getString("data");
 			String sign = params.getString("sign");
-			if(!SignUtil.checkSign(data, sign, "")){
-				return resultVo;
+			if(!RSAHelper.verify(data.getBytes(),merchantPublicKey,sign)){
+				throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
 			}
 			String timestamp = params.getString("timestamp");
 			Date timeDate = DateHelper.addMinute(DateHelper.parseDate(timestamp,"yyyy-MM-dd HH:mm:ss"), 5);
@@ -47,32 +49,13 @@ public class SignService extends CredanBaseService{
 				throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
 			}
 
-			String decryptData = SignUtil.decrypt(sign, desKey);
+			String decryptData = DesHelper.decrypt(data,desKey);
+			params.put(data, decryptData);
 			
 		} catch (Exception e) {
 			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
 		}
-		return resultVo;
-	}
-	
-	
-	/**
-	 * 
-	 * @param data
-	 * @return
-	 * @throws Exception
-	 */
-	public String decryptSign(String data) throws Exception{
-		String signData = SignUtil.sign(data, credanPrivateKey);
-		String decrypt = SignUtil.decrypt(data, credanDeskey);
-		System.err.println(decrypt);
-		return decrypt; 
-	}
-
-	public String encryptSign(String data) throws Exception{
-		String encrypt = SignUtil.encrypt(data, desKey);
-		System.err.println(encrypt);
-		return encrypt;
+		return params;
 	}
 	
 	
