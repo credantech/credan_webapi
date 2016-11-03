@@ -48,7 +48,7 @@ public class EncryptProcessor implements ContainerRequestFilter {
 			cr.bufferEntity();
 			param = cr.readEntity(String.class);
 			JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
-			params = signService.processParams(params);
+			params = signService.processInputParams(params);
 			InputStream inputStream = new ByteArrayInputStream(params.toJSONString().getBytes(Charsets.UTF_8));
 			arg0.setEntityStream(inputStream);
 		} catch (Exception e) {

@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SignService extends AbstractBasicService {
 
-	@Value("${connet_time}")
+	@Value("${connect_time}")
 	private int connetTime;
 
 	@Value("${zlj_deskey}")
@@ -29,11 +29,12 @@ public class SignService extends AbstractBasicService {
 	@Value("${zlj_public_key}")
 	private String merchantPublicKey;
 
-	public JSONObject processParams(JSONObject params) {
+	public JSONObject processInputParams(JSONObject params) {
 		checkNotNull(params, "sign", "data", "timestamp");
 		String data = params.getString("data");
 		String sign = params.getString("sign");
 		String timestamp = params.getString("timestamp");
+		
 		boolean verify = false;
 		try {
 			verify = RSAHelper.verify(data.getBytes(), merchantPublicKey, sign);
@@ -68,5 +69,7 @@ public class SignService extends AbstractBasicService {
 		params.put("data", JSONObject.parseObject(decryptData));
 		return params;
 	}
+	
+	
 
 }
