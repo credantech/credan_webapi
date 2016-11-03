@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SignService extends AbstractBasicService {
 
-	@Value("${connet_time}")
+	@Value("${connect_time}")
 	private int connetTime;
 
 	@Value("${zlj_deskey}")
