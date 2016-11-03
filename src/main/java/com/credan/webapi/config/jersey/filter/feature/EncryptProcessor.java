@@ -14,12 +14,14 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 
 import org.glassfish.jersey.server.ContainerRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.Json;
 import com.credan.webapi.config.jersey.exception.ParamException;
+import com.credan.webapi.core.service.security.SignService;
 import com.google.common.base.Charsets;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class EncryptProcessor implements ContainerRequestFilter {
+
+	@Autowired
+	private SignService signService;
+
 	@Override
 	public void filter(ContainerRequestContext arg0) throws IOException {
 		String param = null;
@@ -42,11 +48,9 @@ public class EncryptProcessor implements ContainerRequestFilter {
 			cr.bufferEntity();
 			param = cr.readEntity(String.class);
 			JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
-			params.put("merchantId", "111");
+			params = signService.processParams(params);
 			InputStream inputStream = new ByteArrayInputStream(params.toJSONString().getBytes(Charsets.UTF_8));
 			arg0.setEntityStream(inputStream);
-
-			System.err.println(params);
 		} catch (Exception e) {
 			log.error(this.getClass().getSimpleName() + ", param : {}", param);
 			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);

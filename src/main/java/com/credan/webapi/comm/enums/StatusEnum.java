@@ -19,11 +19,12 @@ public enum StatusEnum {
 	UN_AUTHORIZED(101, "无权访问"),
 	INVALID(102, "无效访问"),
 	PROPERTY_REQUIRED(103, "[%s]字段为必填字段"),
-	PROPERTY_LENGTH_ERROR(104, "[%s]字段长度与规则不符"),
+	PROPERTY_LENGTH_ERROR(104, "[%s]字段格式与规则不符"),
 	PARAM_FORMAT_ERROR(105, "数据规则校验失败"),
 	SYSTEM_ERROR(106, "系统内部错误"),
 	SYSTEM_USELESS(107, "系统暂时不可用"),
-	CONNECTOR_DEV(108,"接口开发中,暂时不可用")
+	CONNECTOR_DEV(108,"接口开发中,暂时不可用"),
+	INVALID_SIGN(109,"验签失败")
 	;
 
 	private final int code;
