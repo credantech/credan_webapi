@@ -104,7 +104,7 @@ public class OrderDetail extends BasicEntity {
 	 *
 	 * @mbg.generated Wed Nov 02 17:31:16 CST 2016
 	 */
-	private String desc;
+	private String remarks;
 
 	/**
 	 *
@@ -399,8 +399,8 @@ public class OrderDetail extends BasicEntity {
 	 *
 	 * @mbg.generated Wed Nov 02 17:31:16 CST 2016
 	 */
-	public String getDesc() {
-		return desc;
+	public String getRemarks() {
+		return remarks;
 	}
 
 	/**
@@ -411,8 +411,8 @@ public class OrderDetail extends BasicEntity {
 	 *
 	 * @mbg.generated Wed Nov 02 17:31:16 CST 2016
 	 */
-	public void setDesc(String desc) {
-		this.desc = desc == null ? null : desc.trim();
+	public void setRemarks(String remarks) {
+		this.remarks = remarks == null ? null : remarks.trim();
 	}
 
 	/**
