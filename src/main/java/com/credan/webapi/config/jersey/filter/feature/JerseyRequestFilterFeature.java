@@ -28,9 +28,11 @@ public class JerseyRequestFilterFeature implements DynamicFeature {
 	@Override
 	public void configure(ResourceInfo resourceInfo, FeatureContext context) {
 		Annotation annotation = resourceInfo.getResourceClass().getAnnotation(EncryptAnnotation.class);
-		annotation = !Objects.equal(annotation, null) ? annotation : resourceInfo.getResourceMethod().getAnnotation(EncryptAnnotation.class);
+		annotation = !Objects.equal(annotation, null) ? annotation
+				: resourceInfo.getResourceMethod().getAnnotation(EncryptAnnotation.class);
 		if (!Objects.equal(annotation, null)) {
 			context.register(EncryptProcessor.class);
+			context.register(DecryptProcessor.class);
 		}
 	}
 

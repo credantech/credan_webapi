@@ -12,6 +12,8 @@ import java.io.InputStream;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 
 import org.glassfish.jersey.server.ContainerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,41 +22,36 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.Json;
+import com.credan.webapi.config.Global;
 import com.credan.webapi.config.jersey.exception.ParamException;
 import com.credan.webapi.core.service.security.SignService;
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 入参解密处理器
+ * 响应结果加密处理器
  * 
  * @author Mond
  * @version 1.0.0, $Date: 2016年11月2日 下午2:30:15 $
  */
 @Slf4j
 @Component
-public class EncryptProcessor implements ContainerRequestFilter {
-
-	@Autowired
-	private SignService signService;
-
+public class DecryptProcessor implements ContainerResponseFilter {
 	@Override
-	public void filter(ContainerRequestContext arg0) throws IOException {
-		String param = null;
-		ContainerRequest cr = null;
-		try {
-			cr = (ContainerRequest) arg0;
-			cr.bufferEntity();
-			param = cr.readEntity(String.class);
-			JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
-			params = signService.processParams(params);
-			InputStream inputStream = new ByteArrayInputStream(params.toJSONString().getBytes(Charsets.UTF_8));
-			arg0.setEntityStream(inputStream);
-		} catch (Exception e) {
-			log.error(this.getClass().getSimpleName() + ", param : {}", param);
-			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
+
+	public void filter(ContainerRequestContext arg0, ContainerResponseContext arg1) throws IOException {
+		ContainerRequest cr = (ContainerRequest) arg0;
+		cr.bufferEntity();
+		String param = cr.readEntity(String.class);
+		JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
+		int resultEncrypt = params.getIntValue(Global.RESULT_ENCRYPT);
+		if (Global.RESULT_ENCRYPT_NO == resultEncrypt) {
+			return;
 		}
+		Object entity = arg1.getEntity();
+		System.err.println(entity);
 	}
 
 }
