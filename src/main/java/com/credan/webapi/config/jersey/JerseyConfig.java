@@ -12,6 +12,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
 import com.credan.webapi.config.jersey.exception.mapper.ParamExceptionMapper;
+import com.credan.webapi.config.jersey.exception.mapper.ResourceExceptionMapper;
 import com.credan.webapi.config.jersey.exception.mapper.ResourceNotFoundExceptionMapper;
 import com.credan.webapi.config.jersey.filter.JerseyCorsFilter;
 import com.credan.webapi.config.jersey.filter.JerseyRequestFilter;
@@ -36,6 +37,7 @@ public class JerseyConfig extends ResourceConfig {
 		/** 过滤器注册 */
 		register(JerseyCorsFilter.class);
 		register(JerseyRequestFilter.class);
+		register(ResourceExceptionMapper.class);
 
 		/** 请求参数加解密处理 */
 		register(JerseyRequestFilterFeature.class);
