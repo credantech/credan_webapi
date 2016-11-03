@@ -23,11 +23,23 @@ public class ParamException extends CustomException {
 	private static final long serialVersionUID = 4487515556761659359L;
 
 	private StatusEnum statusEnum;
+	private String message;
+
+	/**
+	 * 参数异常
+	 * 
+	 * @param statusEnum
+	 * @param placeholders 需要占位符
+	 */
+	public ParamException(StatusEnum statusEnum, Object... placeholders) {
+		this.statusEnum = statusEnum;
+		this.message = String.format(statusEnum.getMsg(), placeholders);
+	}
 
 	public ParamException(StatusEnum statusEnum) {
-		this.statusEnum = statusEnum;
+		this(statusEnum, "");
 	}
-	
+
 	public StatusEnum getStatusEnum() {
 		return statusEnum;
 	}
@@ -36,4 +48,12 @@ public class ParamException extends CustomException {
 		this.statusEnum = statusEnum;
 	}
 
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
 }

@@ -6,7 +6,9 @@
  */
 package com.credan.webapi.config.jersey.filter.feature;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -16,11 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.Json;
 import com.credan.webapi.config.jersey.exception.ParamException;
 import com.credan.webapi.service.sign.SignService;
+import com.google.common.base.Charsets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +50,10 @@ public class EncryptProcessor implements ContainerRequestFilter {
 			JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
 			// TODO 处理数据 params,解析data数据，待处理
 //			ResultVo result = signService.processParams(params);
+			params.put("merchantId", "111");
+			InputStream inputStream = new ByteArrayInputStream(params.toJSONString().getBytes(Charsets.UTF_8));
+			arg0.setEntityStream(inputStream);
+
 			System.err.println(params);
 		} catch (Exception e) {
 			log.error(this.getClass().getSimpleName() + ", param : {}", param);

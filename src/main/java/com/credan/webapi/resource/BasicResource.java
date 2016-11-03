@@ -8,6 +8,7 @@ package com.credan.webapi.resource;
 
 import javax.ws.rs.core.Response;
 
+import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.google.common.base.Preconditions;
 
@@ -33,6 +34,10 @@ public abstract class BasicResource {
 			vo = new ResultVo(false);
 		}
 		return Response.status(200).entity(vo).build();
+	}
+	
+	protected JSONObject toJson(String str){
+		return JSONObject.parseObject(str);
 	}
 
 }

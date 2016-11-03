@@ -17,7 +17,7 @@ security:
     name: admin
     password: credan88
   ignored:
-    - /v1/**
+    - /api/**
     
 # 管理配置    
 management:

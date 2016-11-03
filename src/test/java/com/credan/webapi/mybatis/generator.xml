@@ -16,18 +16,20 @@
 			userId="credan_user" password="Credan888">
 		</jdbcConnection>
 
-		<javaModelGenerator targetPackage="com.credan.webapi.core.dao.entity"
+		<javaModelGenerator targetPackage="com.credan.webapi.core.dao.entity.order"
 			targetProject="src/main/java">
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 
-		<sqlMapGenerator targetPackage="mybatis.mappers.share" targetProject="src/main/resources" />
+		<sqlMapGenerator targetPackage="mybatis.mappers.order" targetProject="src/main/resources" />
 
-		<javaClientGenerator targetPackage="com.credan.webapi.core.dao.mapper"
+		<javaClientGenerator targetPackage="com.credan.webapi.core.dao.mapper.order"
 			targetProject="src/main/java" type="XMLMAPPER" />
 
-		<table tableName="t_mobile_label" domainObjectName="MobileLabel"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
+<!-- 		<table tableName="merchant_order_detail" domainObjectName="OrderDetail"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
 <!-- 			<generatedKey column="id" sqlStatement="Mysql" identity="true" /> -->
-		</table>
+<!-- 		</table> -->
+<!-- 		<table tableName="merchant_order_detail_log" domainObjectName="OrderDetailLog"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
+<!-- 		</table> -->
 	</context>
 </generatorConfiguration>

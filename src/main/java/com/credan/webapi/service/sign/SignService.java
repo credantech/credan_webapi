@@ -63,6 +63,7 @@ public class SignService extends CredanBaseService{
 	 * @throws Exception
 	 */
 	public String decryptSign(String data) throws Exception{
+		String signData = SignUtil.sign(data, credanPrivateKey);
 		String decrypt = SignUtil.decrypt(data, credanDeskey);
 		System.err.println(decrypt);
 		return decrypt; 
@@ -73,5 +74,7 @@ public class SignService extends CredanBaseService{
 		System.err.println(encrypt);
 		return encrypt;
 	}
+	
+	
 	
 }
