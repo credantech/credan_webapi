@@ -12,12 +12,15 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 
 import org.glassfish.jersey.server.ContainerRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.Json;
 import com.credan.webapi.config.jersey.exception.ParamException;
+import com.credan.webapi.service.sign.SignService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +33,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class EncryptProcessor implements ContainerRequestFilter {
+	
+	@Autowired
+	private SignService signService;
+	
 	@Override
 	public void filter(ContainerRequestContext arg0) throws IOException {
 		String param = null;
@@ -39,7 +46,8 @@ public class EncryptProcessor implements ContainerRequestFilter {
 			cr.bufferEntity();
 			param = cr.readEntity(String.class);
 			JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
-
+			// TODO 处理数据 params,解析data数据，待处理
+//			ResultVo result = signService.processParams(params);
 			System.err.println(params);
 		} catch (Exception e) {
 			log.error(this.getClass().getSimpleName() + ", param : {}", param);

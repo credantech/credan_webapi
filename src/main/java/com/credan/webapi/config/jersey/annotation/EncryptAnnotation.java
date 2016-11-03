@@ -22,5 +22,5 @@ import java.lang.annotation.Target;
 public @interface EncryptAnnotation {
 
 	boolean value() default true;
-
+	
 }
