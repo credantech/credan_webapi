@@ -8,6 +8,8 @@ package com.credan.webapi.core.dao.entity;
 
 import java.util.Date;
 
+import javax.persistence.Transient;
+
 import lombok.Data;
 
 /**
