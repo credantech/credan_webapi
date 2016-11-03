@@ -12,9 +12,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.config.jersey.annotation.EncryptAnnotation;
+import com.credan.webapi.core.service.merchant.zlj.ZLJService;
 import com.credan.webapi.resource.BasicResource;
 
 /**
@@ -28,6 +30,9 @@ import com.credan.webapi.resource.BasicResource;
 @Produces(MediaType.APPLICATION_JSON)
 public class ZLJResource extends BasicResource {
 
+	@Autowired
+	private ZLJService zLJService;
+
 	/**
 	 * 商户跳入请求
 	 * 
@@ -37,7 +42,7 @@ public class ZLJResource extends BasicResource {
 	@POST
 	@Path("/index")
 	public Response index(String params) {
-		ResultVo resultVo = new ResultVo(false);
+		ResultVo resultVo = zLJService.index(toJson(params));
 		return toResponse(resultVo);
 	}
 
@@ -50,7 +55,20 @@ public class ZLJResource extends BasicResource {
 	@POST
 	@Path("/findOrders")
 	public Response findOrders(String params) {
-		ResultVo resultVo = new ResultVo(false);
+		ResultVo resultVo = zLJService.findOrders(toJson(params));
+		return toResponse(resultVo);
+	}
+	
+	/**
+	 * 回调通知
+	 * 
+	 * @param params
+	 * @return
+	 */
+	@POST
+	@Path("/notify")
+	public Response notify(String params) {
+		ResultVo resultVo = zLJService.notify(toJson(params));
 		return toResponse(resultVo);
 	}
 

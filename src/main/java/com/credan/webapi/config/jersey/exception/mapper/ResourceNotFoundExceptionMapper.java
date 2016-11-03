@@ -15,7 +15,7 @@ import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.StatusEnum;
 
 /**
- * 
+ * 接口404
  * 
  * @author Mond
  * @version 1.0.0, $Date: 2016年11月2日 下午12:43:04 $
