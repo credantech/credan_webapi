@@ -344,13 +344,15 @@ public class RSAHelper {
 		return Base64Util.encodeBase64String(key.getEncoded());
 	}
 	
-//	public static void main(String[] args) throws Exception {
-//		Map<String, Object> genKeyPair = genKeyPair("123456");
-//		String privateKey = getPrivateKey(genKeyPair);
-//		String publicKey = getPublicKey(genKeyPair);
-//		String a = "abcdfrr";
-//		String initKey = DesHelper.initKey("123456");
-//		System.err.println("initKey : " + initKey);
+	public static void main(String[] args) throws Exception {
+		Map<String, Object> genKeyPair = genKeyPair("123456");
+		String privateKey = getPrivateKey(genKeyPair);
+		System.err.println(privateKey);
+		String publicKey = getPublicKey(genKeyPair);
+		System.err.println("publicKey : " +publicKey);
+		String a = "abcdfrr";
+		String initKey = DesHelper.initKey("123456");
+		System.err.println("initKey : " + initKey);
 //		String encrypt = DesHelper.encrypt(a, initKey);
 //		System.err.println("encrypt : " + encrypt);
 //		String sign = sign(encrypt, privateKey);
@@ -359,6 +361,6 @@ public class RSAHelper {
 //		System.err.println("verify : " + verify);
 //		String decrypt = DesHelper.decrypt(encrypt, initKey);
 //		System.err.println("decrypt : " + decrypt);
-//	}
+	}
 
 }

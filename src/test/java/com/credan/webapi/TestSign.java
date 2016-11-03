@@ -13,27 +13,21 @@ public class TestSign extends ApplicationTests {
 	public String credanPublicKey;
 
 	@Value("${credan_private_key}")
-	public static String credanPrivateKey;
+	public String credanPrivateKey;
 
 	@Value("${credan_deskey}")
-	public static String desKey;
+	public String desKey;
 
+	@Test
 	public void testSign() throws Exception {
 		JSONObject param = JSONObject.parseObject(
 				"{\"itemName\":\"***\",\"itemAmt\":1,\"itemPrice\":200.37,\"tenorApplied\":\"\",\"orderId\":\"\"}");
 
 		String encrypt = DesHelper.encrypt(param.toJSONString(), desKey);
-		String sign = RSAHelper.sign(encrypt.getBytes(), credanPrivateKey);
-		System.err.println(sign);
+		System.err.println("encrypt : " + encrypt);
+		String sign = RSAHelper.sign(encrypt, credanPrivateKey);
+		System.err.println("sign :" + sign);
 	}
 
-	public static void main(String[] args) throws Exception {
-		JSONObject param = JSONObject.parseObject(
-				"{\"itemName\":\"手机\",\"itemAmt\":1,\"itemPrice\":200.37,\"tenorApplied\":\"9\",\"orderId\":\"12521215\"}");
-
-		String encrypt = DesHelper.encrypt(param.toJSONString(), desKey);
-		String sign = RSAHelper.sign(encrypt.getBytes(), credanPrivateKey);
-		System.err.println(sign);
-	}
 
 }
