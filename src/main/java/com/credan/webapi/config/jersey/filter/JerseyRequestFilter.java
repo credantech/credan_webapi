@@ -14,11 +14,6 @@ import javax.ws.rs.ext.Provider;
 
 import org.glassfish.jersey.server.ContainerRequest;
 
-import com.alibaba.fastjson.JSONObject;
-import com.credan.webapi.comm.enums.StatusEnum;
-import com.credan.webapi.comm.util.Json;
-import com.credan.webapi.config.jersey.exception.ParamException;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,17 +30,10 @@ public class JerseyRequestFilter implements ContainerRequestFilter {
 	public void filter(ContainerRequestContext containerrequestcontext) throws IOException {
 		String param = null;
 		ContainerRequest cr = null;
-		try {
-			cr = (ContainerRequest) containerrequestcontext;
-			cr.bufferEntity();
-			param = cr.readEntity(String.class);
-			Json.ObjectMapper.fromJson(param, JSONObject.class);
-			log.debug("URL --> {}, Paramter --> {}", cr.getRequestUri().getPath(), param);
-		} catch (Exception e) {
-			log.error(this.getClass().getSimpleName() + ", param : {}", param);
-			log.error("请求参数不是Json格式", e);
-			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
-		}
+		cr = (ContainerRequest) containerrequestcontext;
+		cr.bufferEntity();
+		param = cr.readEntity(String.class);
+		log.debug("URL --> {}, Paramter --> {}", cr.getRequestUri().getPath(), param);
 	}
 
 }

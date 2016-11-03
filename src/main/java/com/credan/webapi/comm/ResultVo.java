@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.credan.webapi.comm.enums.StatusEnum;
-import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.Json;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -37,12 +36,8 @@ public class ResultVo implements Serializable {
 	private boolean isSuccess;
 	/** 错误代码 */
 	private int errorCode;
-	/** 请求类型 */
-	private String txnCode;
 	/** 消息 */
 	private String message;
-	/** 时间戳 */
-	private String timestamp;
 	/** 响应的结果 */
 	private final Map<String, Object> data = Maps.newHashMap();
 
@@ -51,7 +46,6 @@ public class ResultVo implements Serializable {
 		StatusEnum statusEnum = isSuccess ? StatusEnum.SUCCESS : StatusEnum.FAIL;
 		this.errorCode = isSuccess ? statusEnum.getCode() : statusEnum.getCode();
 		this.message = Strings.isNullOrEmpty(message) ? statusEnum.getMsg() : message;
-		this.timestamp = DateHelper.getDateTime();
 	}
 
 	public ResultVo(boolean isSuccess) {

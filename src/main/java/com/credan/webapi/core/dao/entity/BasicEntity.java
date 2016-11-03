@@ -8,7 +8,7 @@ package com.credan.webapi.core.dao.entity;
 
 import java.util.Date;
 
-import javax.persistence.Transient;
+import com.google.common.base.Strings;
 
 import lombok.Data;
 
@@ -31,12 +31,16 @@ public class BasicEntity {
 
 	private Date lastUpdated;
 
-	private boolean isNew;
+	private boolean isNewRecord = false;
 
 	private Long version;
 
-	public BasicEntity() {
-		this.isNew = true;
+	public boolean isNewRecord() {
+		return isNewRecord || Strings.isNullOrEmpty(getId());
+	}
+
+	public void setNewRecord(boolean isNewRecord) {
+		this.isNewRecord = isNewRecord;
 	}
 
 }

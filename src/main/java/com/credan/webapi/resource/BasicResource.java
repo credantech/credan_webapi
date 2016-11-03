@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
+import com.credan.webapi.config.jersey.entity.ResponseVo;
 import com.google.common.base.Preconditions;
 
 /**
@@ -28,15 +29,18 @@ public abstract class BasicResource {
 	 * @return
 	 */
 	protected Response toResponse(ResultVo vo) {
+		ResponseVo responseVo = null;
 		try {
 			Preconditions.checkNotNull(vo);
 		} catch (Exception e) {
 			vo = new ResultVo(false);
 		}
-		return Response.status(200).entity(vo).build();
+		responseVo = ResponseVo.builder().data(vo.getData()).errorCode(vo.getErrorCode()).message(vo.getMessage())
+				.timestamp(com.credan.webapi.comm.util.DateHelper.getDateTime()).build();
+		return Response.status(200).entity(responseVo).build();
 	}
-	
-	protected JSONObject toJson(String str){
+
+	protected JSONObject toJson(String str) {
 		return JSONObject.parseObject(str);
 	}
 

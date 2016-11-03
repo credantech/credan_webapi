@@ -31,8 +31,8 @@ public class JerseyRequestFilterFeature implements DynamicFeature {
 		annotation = !Objects.equal(annotation, null) ? annotation
 				: resourceInfo.getResourceMethod().getAnnotation(EncryptAnnotation.class);
 		if (!Objects.equal(annotation, null)) {
-			context.register(EncryptProcessor.class);
 			context.register(DecryptProcessor.class);
+			context.register(EncryptProcessor.class);
 		}
 	}
 

@@ -30,7 +30,7 @@ public class ResourceExceptionMapper implements ExceptionMapper<Exception> {
 		log.error(arg0.getMessage(), arg0);
 		ResultVo vo = new ResultVo(false);
 		vo.setErrorCode(statusEnum.getCode());
-		vo.setMessage(arg0.getMessage());
+		vo.setMessage(statusEnum.getMsg());
 		return Response.status(200).entity(vo).build();
 	}
 }

@@ -4,29 +4,44 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.alibaba.fastjson.JSONObject;
-import com.credan.webapi.comm.util.security.DesHelper;
+import com.credan.webapi.comm.util.DateHelper;
+import com.credan.webapi.comm.util.security.DESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 
 public class TestSign extends ApplicationTests {
 
-	@Value("${credan_public_key}")
-	public String credanPublicKey;
+	@Value("${zlj_public_key}")
+	public String zljPublicKey;
 
-	@Value("${credan_private_key}")
-	public String credanPrivateKey;
+	@Value("${zlj_private_key}")
+	public String zljPrivateKey;
 
-	@Value("${credan_deskey}")
+	@Value("${zlj_deskey}")
 	public String desKey;
 
 	@Test
 	public void testSign() throws Exception {
+		JSONObject jsonObject = new JSONObject();
 		JSONObject param = JSONObject.parseObject(
-				"{\"itemName\":\"***\",\"itemAmt\":1,\"itemPrice\":200.37,\"tenorApplied\":\"\",\"orderId\":\"\"}");
-
-		String encrypt = DesHelper.encrypt(param.toJSONString(), desKey);
+				"{\"itemName\":\"***\",\"itemAmt\":1,\"itemPrice\":200.37,\"tenorApplied\":\"1\",\"orderId\":\"123\"}");
+		jsonObject.put("merchantId", "1111");
+		jsonObject.put("orderId", "123");
+		String jsonString = param.toJSONString();
+		String encrypt = DESHelper.encrypt(jsonString, desKey);
 		System.err.println("encrypt : " + encrypt);
-		String sign = RSAHelper.sign(encrypt, credanPrivateKey);
+		String sign = RSAHelper.sign(encrypt, zljPrivateKey);
 		System.err.println("sign :" + sign);
+		jsonObject.put("data", encrypt);
+		jsonObject.put("sign", sign);
+		jsonObject.put("resultEncrypt", 1);
+		jsonObject.put("timestamp", DateHelper.getDate("yyyy-MM-dd HH:mm:ss"));
+		System.err.println("desKey : " + desKey);
+		System.err.println("jsonString : " + jsonString);
+		System.err.println("zljPrivateKey : " + zljPrivateKey);
+		System.err.println(" zljPublicKey : " + zljPublicKey);
+		System.err.println(RSAHelper.verify(encrypt, zljPublicKey, sign));
+		
+		System.err.println(jsonObject);
 	}
 
 

@@ -26,7 +26,7 @@ public abstract class BasicService<D extends MyBatisDao<T>, T extends BasicEntit
 	private D dao;
 
 	protected int save(T t) {
-		if (t.isNew()) {
+		if (t.isNewRecord()) {
 			t.setId(UUIDUtils.getUniqueUUID());
 			t.setDelFlag(DelFlagEnum.FALSE.getCode());
 			t.setCreatedTime(DateHelper.getCurrentTime());

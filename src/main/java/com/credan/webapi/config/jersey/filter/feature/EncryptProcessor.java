@@ -1,48 +1,66 @@
 /**
- * @(#) EncryptProcessor.java
+ * @(#) DecryptProcessor.java
  * 
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
 package com.credan.webapi.config.jersey.filter.feature;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.server.ContainerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.credan.webapi.comm.util.Json;
-import com.credan.webapi.core.service.security.SignService;
-import com.google.common.base.Charsets;
+import com.credan.webapi.comm.enums.StatusEnum;
+import com.credan.webapi.config.Global;
+import com.credan.webapi.config.jersey.entity.RequestVo;
+import com.credan.webapi.config.jersey.entity.ResponseVo;
+import com.credan.webapi.core.service.security.EncryptResponseService;
+import com.google.common.base.Strings;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * 入参解密处理器
+ * 响应结果加密处理器
  * 
  * @author Mond
  * @version 1.0.0, $Date: 2016年11月2日 下午2:30:15 $
  */
+@Slf4j
 @Component
-public class EncryptProcessor implements ContainerRequestFilter {
-
+public class EncryptProcessor implements ContainerResponseFilter {
 	@Autowired
-	private SignService signService;
+	private EncryptResponseService encryptResponseService;
 
 	@Override
-	public void filter(ContainerRequestContext arg0) throws IOException {
-		ContainerRequest cr = (ContainerRequest) arg0;
-		cr.bufferEntity();
-		String param = cr.readEntity(String.class);
-		JSONObject params = Json.ObjectMapper.fromJson(param, JSONObject.class);
-		params = signService.processInputParams(params);
-		InputStream inputStream = new ByteArrayInputStream(params.toJSONString().getBytes(Charsets.UTF_8));
-		arg0.setEntityStream(inputStream);
+	public void filter(ContainerRequestContext arg0, ContainerResponseContext arg1) throws IOException {
+		try {
+			ContainerRequest cr = (ContainerRequest) arg0;
+			cr.bufferEntity();
+			String param = cr.readEntity(String.class);
+			RequestVo requestParam = JSONObject.parseObject(param, RequestVo.class);
+			int resultEncrypt = Strings.isNullOrEmpty(requestParam.getResultEncrypt()) ? Global.RESULT_ENCRYPT_NO
+					: Integer.valueOf(requestParam.getResultEncrypt());
+			if (Global.RESULT_ENCRYPT_NO == resultEncrypt) {
+				return;
+			}
+			Object entity = arg1.getEntity();
+			ResponseVo encryResponse = encryptResponseService.encryResponse(entity.toString(), requestParam);
+			arg1.setEntity(encryResponse);
+		} catch (Exception e) {
+			log.error("处理响应结果异常", e);
+			arg1.setStatus(Status.OK.getStatusCode());
+			ResponseVo build = ResponseVo.builder().errorCode(StatusEnum.SYSTEM_ERROR.getCode())
+					.message(StatusEnum.SYSTEM_ERROR.getMsg()).build();
+			arg1.setEntity(build);
+		}
 	}
 
 }
