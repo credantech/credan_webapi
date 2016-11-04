@@ -28,7 +28,6 @@ public final class DESHelper {
 		IvParameterSpec iv = new IvParameterSpec(desKey.getBytes());
 		AlgorithmParameterSpec paramSpec = iv;
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey, paramSpec);
-
 		return cipher.doFinal(plainText);
 	}
 

@@ -8,6 +8,8 @@ package com.credan.webapi.config.jersey.entity;
 
 import java.io.Serializable;
 
+import com.credan.webapi.comm.util.Json;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -50,5 +52,10 @@ public class ResponseVo implements Serializable {
 
 	/** 加密签名 */
 	private String sign;
-	
+
+	@Override
+	public String toString() {
+		return Json.ObjectMapper.writeValue(this);
+	}
+
 }
