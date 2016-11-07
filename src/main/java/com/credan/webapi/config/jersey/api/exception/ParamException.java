@@ -6,8 +6,8 @@
  */
 package com.credan.webapi.config.jersey.api.exception;
 
-import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.config.exception.CustomException;
+import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 
 /**
  * 参数异常

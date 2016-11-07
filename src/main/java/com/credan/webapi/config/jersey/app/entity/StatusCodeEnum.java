@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.comm.enums;
+package com.credan.webapi.config.jersey.app.entity;
 
 /**
  * 返回前端状态码

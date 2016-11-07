@@ -8,8 +8,8 @@ package com.credan.webapi.resource.app.base;
 
 import javax.ws.rs.core.Response;
 
-import com.credan.webapi.comm.ApiResultResponse;
 import com.credan.webapi.comm.JsonResult;
+import com.credan.webapi.config.jersey.app.entity.ApiResultResponse;
 import com.credan.webapi.resource.AbstractBasicResource;
 
 /**

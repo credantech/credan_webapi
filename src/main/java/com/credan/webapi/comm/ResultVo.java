@@ -9,8 +9,8 @@ package com.credan.webapi.comm;
 import java.io.Serializable;
 import java.util.Map;
 
-import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.Json;
+import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 

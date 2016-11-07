@@ -11,7 +11,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.credan.webapi.comm.ResultVo;
-import com.credan.webapi.comm.enums.StatusEnum;
+import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
 
 import lombok.extern.slf4j.Slf4j;
