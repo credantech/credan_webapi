@@ -126,8 +126,9 @@ public class ZLJService extends AbstractBasicService {
 	 */
 	@Transactional(readOnly = true)
 	public ResultVo findOrders(JSONObject param) {
-		checkNotNull(param, "orderIds");
-		JSONArray orderIds = param.getJSONArray("orderIds");
+		JSONObject data = param.getJSONObject("data");
+		checkNotNull(data, "orderIds");
+		JSONArray orderIds = data.getJSONArray("orderIds");
 		int total = 0;
 		if (null == orderIds || orderIds.size() == 0) {
 			ResultVo resultVo = new ResultVo(true);
