@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.config.jersey.exception;
+package com.credan.webapi.config.jersey.api.exception;
 
 import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.config.exception.CustomException;

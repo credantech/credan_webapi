@@ -11,8 +11,8 @@ import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.security.DESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
-import com.credan.webapi.config.jersey.entity.RequestVo;
-import com.credan.webapi.config.jersey.exception.ParamException;
+import com.credan.webapi.config.jersey.api.entity.RequestVo;
+import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.credan.webapi.core.service.AbstractBasicService;
 
 import lombok.extern.slf4j.Slf4j;

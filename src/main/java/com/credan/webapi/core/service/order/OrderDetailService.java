@@ -20,7 +20,11 @@ import com.credan.webapi.core.service.BasicService;
  */
 @Service
 public class OrderDetailService extends BasicService<OrderDetailDao, OrderDetail> {
-	
+
+	public int saveSelective(OrderDetail record) {
+		return super.saveSelective(record);
+	}
+
 	public int save(OrderDetail record) {
 		return super.save(record);
 	}

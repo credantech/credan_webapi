@@ -7,22 +7,37 @@
 package com.credan.webapi.core.service.merchant.zlj;
 
 import java.math.BigDecimal;
-import java.util.Map;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.credan.webapi.comm.JsonResult;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums;
+import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
+import com.credan.webapi.comm.util.DateHelper;
+import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
 import com.credan.webapi.core.dao.entity.order.OrderDetailLog;
+import com.credan.webapi.core.dao.entity.order.OrderDetailVo;
 import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
 import com.credan.webapi.core.service.AbstractBasicService;
 import com.credan.webapi.core.service.order.OrderDetailLogService;
 import com.credan.webapi.core.service.order.OrderDetailService;
+import com.google.common.base.Function;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 找靓机Service
@@ -30,6 +45,7 @@ import com.credan.webapi.core.service.order.OrderDetailService;
  * @author Mond
  * @version 1.0.0, $Date: 2016年11月2日 下午1:22:17 $
  */
+@Slf4j
 @Service
 public class ZLJService extends AbstractBasicService {
 
@@ -39,15 +55,20 @@ public class ZLJService extends AbstractBasicService {
 	private OrderDetailLogService orderDetailLogService;
 	@Autowired
 	private OrderDetailDao orderDetailDao;
+	@Inject
+	private AppConfig appConfig;
+	@Autowired
+	private RestTemplate restTemplate;
 
 	/**
-	 * 商户跳入解析数据
+	 * 商户跳入解析数据（该接口由前端转发进入）
 	 * 
 	 * @param param
 	 * @return
 	 */
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-	public ResultVo index(JSONObject param) {
+	public JsonResult index(JSONObject param) {
+		
 		checkNotNull(param, "merchantId", "data");
 		String merchantId = param.getString("merchantId");
 		JSONObject data = param.getJSONObject("data");
@@ -63,6 +84,7 @@ public class ZLJService extends AbstractBasicService {
 		if (null == record) {
 			record = new OrderDetail();
 		}
+		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
 		record.setCount(Long.valueOf(itemAmt));
 		record.setMerchantId(merchantId);
@@ -83,11 +105,10 @@ public class ZLJService extends AbstractBasicService {
 		log.setTerm(Long.valueOf(tenorApplied));
 		log.setUnit(unit);
 		orderDetailLogService.save(log);
-		ResultVo resultVo = new ResultVo(true);
-		@SuppressWarnings("unchecked")
-		Map<String, Object> javaObject = data.toJavaObject(Map.class);
-		resultVo.putValue(javaObject);
-		return resultVo;
+
+		JsonResult jsonResult = new JsonResult(true);
+		jsonResult.setData(data);
+		return jsonResult;
 	}
 
 	/**
@@ -99,7 +120,25 @@ public class ZLJService extends AbstractBasicService {
 	@Transactional(readOnly = true)
 	public ResultVo findOrders(JSONObject param) {
 		checkNotNull(param, "orderIds");
+		JSONArray orderIds = param.getJSONArray("orderIds");
+		int total = 0;
+		if (null == orderIds || orderIds.size() == 0) {
+			ResultVo resultVo = new ResultVo(true);
+			resultVo.putValue("total", total);
+			resultVo.putValue("result", Lists.newArrayList());
+			return resultVo;
+		}
+		List<String> ids = Lists.transform(Lists.newArrayList(orderIds.iterator()), new Function<Object, String>() {
+			@Override
+			public String apply(Object arg0) {
+				return arg0.toString();
+			}
+		});
+		List<OrderDetailVo> findDetails = orderDetailDao.findDetails(ids);
+		findDetails = null == findDetails ? Lists.newArrayList() : findDetails;
 		ResultVo resultVo = new ResultVo(true);
+		resultVo.putValue("total", total);
+		resultVo.putValue("result", findDetails);
 		return resultVo;
 	}
 
@@ -112,8 +151,41 @@ public class ZLJService extends AbstractBasicService {
 	@Transactional(readOnly = true)
 	public ResultVo notify(JSONObject param) {
 		checkNotNull(param, "projectId");
+		String projectId = param.getString("projectId");
 
+		OrderDetail orderDetail = orderDetailDao.findOneByProjectId(projectId);
+		if (null == orderDetail) {
+			log.error("notify projectId find OrderDetail is null , projectId : {}", projectId);
+			return new ResultVo(false);
+		}
+		JSONObject reqParam = new JSONObject();
+		reqParam.put("orderId", orderDetail.getOrderId());
+		reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
+		reqParam.put("ext", null);
+		String zljNotifyUrl = appConfig.getZljNotifyUrl();
+		String post = restTemplate.postForObject(zljNotifyUrl, reqParam, String.class);
+
+		Date currentTime = DateHelper.getCurrentTime();
+		orderDetail.setCallBackCount(orderDetail.getCallBackCount() + 1);
+		orderDetail.setCallBackResult(Strings.isNullOrEmpty(post) ? CallBackResultEnum.FAIL.toString() : post);
+		orderDetail.setCallBackTime(currentTime);
+
+		switch (orderDetail.getCallBackCount().intValue()) {
+		case 1:
+			orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
+			break;
+		case 2:
+			orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
+			break;
+		case 3:
+			orderDetail.setNextCallBackTime(null);
+			break;
+		default:
+			break;
+		}
+		orderDetailService.save(orderDetail);
 		ResultVo resultVo = new ResultVo(true);
+		resultVo.putValue("status", post);
 		return resultVo;
 	}
 

@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.config.jersey.filter.feature;
+package com.credan.webapi.config.jersey.api.filter.feature;
 
 import java.lang.annotation.Annotation;
 
@@ -13,7 +13,7 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 
-import com.credan.webapi.config.jersey.annotation.EncryptAnnotation;
+import com.credan.webapi.config.jersey.api.annotation.EncryptAnnotation;
 import com.google.common.base.Objects;
 
 /**

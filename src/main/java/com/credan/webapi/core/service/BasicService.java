@@ -25,6 +25,18 @@ public abstract class BasicService<D extends MyBatisDao<T>, T extends BasicEntit
 	@Autowired
 	private D dao;
 
+	protected int saveSelective(T t) {
+		if (t.isNewRecord()) {
+			t.setId(UUIDUtils.getUniqueUUID());
+			t.setDelFlag(DelFlagEnum.FALSE.getCode());
+			t.setCreatedTime(DateHelper.getCurrentTime());
+			t.setVersion(Long.valueOf(0));
+			return dao.insertSelective(t);
+		}
+		t.setLastUpdated(DateHelper.getCurrentTime());
+		return dao.updateByPrimaryKeySelective(t);
+	}
+
 	protected int save(T t) {
 		if (t.isNewRecord()) {
 			t.setId(UUIDUtils.getUniqueUUID());
@@ -34,7 +46,7 @@ public abstract class BasicService<D extends MyBatisDao<T>, T extends BasicEntit
 			return dao.insert(t);
 		}
 		t.setLastUpdated(DateHelper.getCurrentTime());
-		return dao.updateByPrimaryKeySelective(t);
+		return dao.updateByPrimaryKey(t);
 	}
 
 }

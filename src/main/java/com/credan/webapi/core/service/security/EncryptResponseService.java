@@ -15,8 +15,8 @@ import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.security.DESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.AppConfig;
-import com.credan.webapi.config.jersey.entity.RequestVo;
-import com.credan.webapi.config.jersey.entity.ResponseVo;
+import com.credan.webapi.config.jersey.api.entity.RequestVo;
+import com.credan.webapi.config.jersey.api.entity.ResponseVo;
 import com.credan.webapi.core.service.AbstractBasicService;
 
 /**
