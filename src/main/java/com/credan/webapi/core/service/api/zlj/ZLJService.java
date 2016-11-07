@@ -9,6 +9,7 @@ package com.credan.webapi.core.service.api.zlj;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -20,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.credan.webapi.comm.JsonResult;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
@@ -66,8 +66,9 @@ public class ZLJService extends AbstractBasicService {
 	 * @param param
 	 * @return
 	 */
+	@SuppressWarnings({ "unchecked", "static-access" })
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-	public JsonResult index(JSONObject param) {
+	public ResultVo index(JSONObject param) {
 		
 		checkNotNull(param, "merchantId", "data");
 		String merchantId = param.getString("merchantId");
@@ -106,9 +107,9 @@ public class ZLJService extends AbstractBasicService {
 		log.setUnit(unit);
 		orderDetailLogService.save(log);
 
-		JsonResult jsonResult = new JsonResult(true);
-		jsonResult.setData(data);
-		return jsonResult;
+		ResultVo resultVo = new ResultVo(true);
+		resultVo.putValue(data.toJavaObject(data, Map.class));
+		return resultVo;
 	}
 
 	/**

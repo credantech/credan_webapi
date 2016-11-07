@@ -17,7 +17,6 @@ import com.credan.webapi.config.jersey.api.exception.mapper.ResourceNotFoundExce
 import com.credan.webapi.config.jersey.api.filter.JerseyCorsFilter;
 import com.credan.webapi.config.jersey.api.filter.JerseyRequestFilter;
 import com.credan.webapi.config.jersey.api.filter.feature.JerseyRequestFilterFeature;
-import com.credan.webapi.config.jersey.app.exception.mapper.ParamVerifyExceptionMapper;
 
 /**
  * Jersey配置入口
@@ -45,7 +44,6 @@ public class JerseyConfig extends ResourceConfig {
 		
 		
 		/** APP相关配置*/
-		register(ParamVerifyExceptionMapper.class);
 
 	}
 

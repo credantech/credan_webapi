@@ -4,13 +4,13 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.resource.api.base;
+package com.credan.webapi.resource.base;
 
 import javax.ws.rs.core.Response;
 
+import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.config.jersey.api.entity.ResponseVo;
-import com.credan.webapi.resource.AbstractBasicResource;
 import com.google.common.base.Preconditions;
 
 /**
@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
  * @author Mond
  * @version 1.0.0, $Date: 2016年11月2日 下午1:25:45 $
  */
-public abstract class BasicResource extends AbstractBasicResource {
+public abstract class BasicResource {
 
 	/**
 	 * 处理响应结果（针对合作商户）
@@ -36,8 +36,12 @@ public abstract class BasicResource extends AbstractBasicResource {
 			vo = new ResultVo(false);
 		}
 		responseVo = ResponseVo.builder().data(vo.getData()).errorCode(vo.getErrorCode()).message(vo.getMessage())
-				.timestamp(com.credan.webapi.comm.util.DateHelper.getDateTime()).build();
+				.timestamp(com.credan.webapi.comm.util.DateHelper.getDateTime()).statusCode(vo.getStatusCode()).build();
 		return Response.status(200).entity(responseVo).build();
+	}
+	
+	protected JSONObject toJson(String str) {
+		return JSONObject.parseObject(str);
 	}
 
 }
