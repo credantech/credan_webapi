@@ -41,7 +41,7 @@ public class ZLJApiResource extends BasicResource {
 	@POST
 	@Path("/index")
 	public Response index(String params) {
-		ResultVo resultVo = zLJService.index(toJson(params));
+		ResultVo resultVo = zLJService.index(params);
 		return toResponse(resultVo);
 	}
 
