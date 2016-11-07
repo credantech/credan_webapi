@@ -29,8 +29,12 @@ public class AppConfig {
 	@Value("${credan_public_key}")
 	private String publicKey;
 
-	/***/
+	/**DES密钥*/
 	@Value("${credan_deskey}")
 	private String desKey;
+	
+	/**找靓机回调URL*/
+	@Value("${zlj.notify.url}")
+	private String zljNotifyUrl;
 
 }

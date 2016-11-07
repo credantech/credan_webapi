@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.config.jersey.filter.feature;
+package com.credan.webapi.config.jersey.api.filter.feature;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.enums.StatusEnum;
-import com.credan.webapi.config.jersey.entity.RequestVo;
-import com.credan.webapi.config.jersey.exception.ParamException;
+import com.credan.webapi.config.jersey.api.entity.RequestVo;
+import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.credan.webapi.core.service.security.SignService;
 import com.google.common.base.Charsets;
 

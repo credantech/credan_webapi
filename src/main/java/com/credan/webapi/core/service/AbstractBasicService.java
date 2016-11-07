@@ -8,7 +8,7 @@ package com.credan.webapi.core.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.enums.StatusEnum;
-import com.credan.webapi.config.jersey.exception.ParamException;
+import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 

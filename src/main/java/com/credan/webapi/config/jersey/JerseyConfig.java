@@ -1,5 +1,5 @@
 /**
- * @Project: Demo @(#) JerseyConfig.java
+ * @Project: Demo @(#) AppJerseyConfig.java
  * 
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
@@ -11,12 +11,13 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
-import com.credan.webapi.config.jersey.exception.mapper.ParamExceptionMapper;
-import com.credan.webapi.config.jersey.exception.mapper.ResourceExceptionMapper;
-import com.credan.webapi.config.jersey.exception.mapper.ResourceNotFoundExceptionMapper;
-import com.credan.webapi.config.jersey.filter.JerseyCorsFilter;
-import com.credan.webapi.config.jersey.filter.JerseyRequestFilter;
-import com.credan.webapi.config.jersey.filter.feature.JerseyRequestFilterFeature;
+import com.credan.webapi.config.jersey.api.exception.mapper.ParamExceptionMapper;
+import com.credan.webapi.config.jersey.api.exception.mapper.ResourceExceptionMapper;
+import com.credan.webapi.config.jersey.api.exception.mapper.ResourceNotFoundExceptionMapper;
+import com.credan.webapi.config.jersey.api.filter.JerseyCorsFilter;
+import com.credan.webapi.config.jersey.api.filter.JerseyRequestFilter;
+import com.credan.webapi.config.jersey.api.filter.feature.JerseyRequestFilterFeature;
+import com.credan.webapi.config.jersey.app.exception.mapper.ParamVerifyExceptionMapper;
 
 /**
  * Jersey配置入口
@@ -41,6 +42,10 @@ public class JerseyConfig extends ResourceConfig {
 
 		/** 请求参数加解密处理 */
 		register(JerseyRequestFilterFeature.class);
+		
+		
+		/** APP相关配置*/
+		register(ParamVerifyExceptionMapper.class);
 
 	}
 

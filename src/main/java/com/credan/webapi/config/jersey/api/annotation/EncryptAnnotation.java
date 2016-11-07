@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.config.jersey.annotation;
+package com.credan.webapi.config.jersey.api.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

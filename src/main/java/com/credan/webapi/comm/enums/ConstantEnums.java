@@ -21,7 +21,7 @@ public interface ConstantEnums {
 	public enum TermUnitEnum {
 		M, D
 	}
-	
+
 	/**
 	 * 回调响应结果状态
 	 *
@@ -30,4 +30,30 @@ public interface ConstantEnums {
 		SUCCESS, FAIL
 	}
 
+	/**
+	 * 回调通知类型
+	 * 
+	 * @author Mond
+	 *
+	 */
+	public enum NotifySubTypeEnum {
+		PAID_SUCCESS("0001", "用户支付完成");
+
+		private final String code;
+		private final String msg;
+
+		private NotifySubTypeEnum(String code, String msg) {
+			this.code = code;
+			this.msg = msg;
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+		public String getMsg() {
+			return msg;
+		}
+
+	}
 }

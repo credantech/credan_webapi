@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.config.jersey.entity;
+package com.credan.webapi.config.jersey.api.entity;
 
 import java.io.Serializable;
 
