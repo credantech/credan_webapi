@@ -14,7 +14,7 @@ import javax.ws.rs.ext.Provider;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
-import com.credan.webapi.comm.enums.StatusEnum;
+import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 
 /**
  * 接口404

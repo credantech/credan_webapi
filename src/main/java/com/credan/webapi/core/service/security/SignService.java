@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.credan.webapi.comm.enums.StatusEnum;
 import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.security.DESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
+import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.credan.webapi.core.service.AbstractBasicService;
 

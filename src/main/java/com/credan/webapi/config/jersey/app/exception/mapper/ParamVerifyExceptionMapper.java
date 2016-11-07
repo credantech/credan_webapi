@@ -13,8 +13,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.credan.webapi.comm.enums.StatusCodeEnum;
 import com.credan.webapi.comm.util.LogUtil;
+import com.credan.webapi.config.jersey.app.entity.StatusCodeEnum;
 import com.credan.webapi.config.jersey.app.exception.ParamVerifyException;
 
 import jersey.repackaged.com.google.common.collect.ImmutableMap;

@@ -8,7 +8,7 @@ package com.credan.webapi.comm;
 
 import java.io.Serializable;
 
-import com.credan.webapi.comm.enums.StatusCodeEnum;
+import com.credan.webapi.config.jersey.app.entity.StatusCodeEnum;
 import com.google.common.base.Strings;
 
 import lombok.AllArgsConstructor;

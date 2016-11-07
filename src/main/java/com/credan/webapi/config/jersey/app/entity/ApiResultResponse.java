@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.credan.webapi.comm;
+package com.credan.webapi.config.jersey.app.entity;
 
 import java.io.Serializable;
 
