@@ -189,5 +189,7 @@ public class ZLJService extends AbstractBasicService {
 		resultVo.putValue("status", post);
 		return resultVo;
 	}
+	
+	
 
 }
