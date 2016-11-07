@@ -14,19 +14,19 @@ package com.credan.webapi.config.jersey.api.entity;
  */
 public enum StatusCodeEnum {
 
-	SUCCESS(200, "操作成功"), 
-	FAIL(201, "操作失败"),
-	WRONG_PARAM(7000,"参数错误或格式异常"),;
+	SUCCESS("200", "操作成功"), 
+	FAILD("4000", "操作失败"),
+	WRONG_PARAM("7000","参数错误或格式异常"),;
 
-	private final int code;
+	private final String code;
 	private final String msg;
 
-	private StatusCodeEnum(int code, String msg) {
+	private StatusCodeEnum(String code, String msg) {
 		this.code = code;
 		this.msg = msg;
 	}
 
-	public int getCode() {
+	public String getCode() {
 		return code;
 	}
 
