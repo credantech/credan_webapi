@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.resource.api;
+package com.credan.webapi.resource;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.config.jersey.api.annotation.EncryptAnnotation;
 import com.credan.webapi.core.service.api.zlj.ZLJService;
-import com.credan.webapi.resource.api.base.BasicResource;
+import com.credan.webapi.resource.base.BasicResource;
 
 /**
  * 找靓机对外WebService接口
@@ -31,7 +31,20 @@ public class ZLJApiResource extends BasicResource {
 
 	@Autowired
 	private ZLJService zLJService;
-	
+
+	/**
+	 * 商户跳入请求(该接口由前端转发进入)
+	 * 
+	 * @param params
+	 * @return
+	 */
+	@POST
+	@Path("/index")
+	public Response index(String params) {
+		ResultVo resultVo = zLJService.index(toJson(params));
+		return toResponse(resultVo);
+	}
+
 	/**
 	 * [商户查询接口]查询订单信息
 	 * 
@@ -58,6 +71,5 @@ public class ZLJApiResource extends BasicResource {
 		ResultVo resultVo = zLJService.notify(toJson(params));
 		return toResponse(resultVo);
 	}
-	
 
 }

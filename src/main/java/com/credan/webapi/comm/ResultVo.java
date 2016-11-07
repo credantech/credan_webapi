@@ -40,6 +40,8 @@ public class ResultVo implements Serializable {
 	private boolean isSuccess;
 	/** 错误代码 */
 	private int errorCode;
+	/**内部错误码*/
+	private String statusCode;
 	/** 消息 */
 	private String message;
 	/** 响应的结果 */

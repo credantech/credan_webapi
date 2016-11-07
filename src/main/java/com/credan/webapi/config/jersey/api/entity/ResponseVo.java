@@ -34,6 +34,9 @@ public class ResponseVo implements Serializable {
 
 	/** 响应错误码 */
 	private Integer errorCode;
+	
+	/** 内部错误码 */
+	private String statusCode;
 
 	/** 请求类型 */
 	private String txnCode;

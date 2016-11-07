@@ -10,7 +10,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
+import com.credan.webapi.config.jersey.api.entity.StatusCodeEnum;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
 
@@ -33,6 +35,10 @@ public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
 		ResultVo vo = new ResultVo(false);
 		vo.setErrorCode(statusEnum.getCode());
 		vo.setMessage(arg0.getMessage());
+
+		StatusCodeEnum wrongParam = StatusCodeEnum.WRONG_PARAM;
+		JSONObject parseObject = JSONObject.parseObject(vo.toString());
+		parseObject.put("statusCode", wrongParam.getCode());
 		return Response.status(200).entity(vo).build();
 	}
 
