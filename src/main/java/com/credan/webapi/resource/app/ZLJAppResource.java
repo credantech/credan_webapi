@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.credan.webapi.comm.JsonResult;
-import com.credan.webapi.core.service.merchant.zlj.ZLJService;
+import com.credan.webapi.core.service.api.zlj.ZLJService;
 import com.credan.webapi.resource.app.base.BasicResource;
 
 /**

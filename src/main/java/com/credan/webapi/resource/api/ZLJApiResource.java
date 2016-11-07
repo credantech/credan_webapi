@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.config.jersey.api.annotation.EncryptAnnotation;
-import com.credan.webapi.core.service.merchant.zlj.ZLJService;
+import com.credan.webapi.core.service.api.zlj.ZLJService;
 import com.credan.webapi.resource.api.base.BasicResource;
 
 /**
