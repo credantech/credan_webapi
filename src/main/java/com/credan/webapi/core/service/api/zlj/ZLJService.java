@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.core.service.merchant.zlj;
+package com.credan.webapi.core.service.api.zlj;
 
 import java.math.BigDecimal;
 import java.util.Date;
