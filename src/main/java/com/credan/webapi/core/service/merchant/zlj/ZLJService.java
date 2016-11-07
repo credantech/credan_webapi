@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.credan.webapi.comm.JsonResult;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
@@ -27,6 +28,7 @@ import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
 import com.credan.webapi.core.dao.entity.order.OrderDetailLog;
+import com.credan.webapi.core.dao.entity.order.OrderDetailVo;
 import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
 import com.credan.webapi.core.service.AbstractBasicService;
 import com.credan.webapi.core.service.order.OrderDetailLogService;
