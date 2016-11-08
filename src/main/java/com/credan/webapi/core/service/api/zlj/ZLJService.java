@@ -26,7 +26,7 @@ import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
 import com.credan.webapi.comm.util.DateHelper;
-import com.credan.webapi.comm.util.security.DESHelper;
+import com.credan.webapi.comm.util.security.AESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
@@ -187,7 +187,7 @@ public class ZLJService extends AbstractBasicService {
 		reqParam.put("ext", ext);
 		
 		Map<String, Object> newHashMap = Maps.newHashMap();
-		newHashMap.put("data", DESHelper.encrypt(reqParam.toString(), appConfig.getDesKey()));
+		newHashMap.put("data", AESHelper.encrypt(reqParam.toString(), appConfig.getDesKey()));
 		newHashMap.put("sign", RSAHelper.sign(newHashMap.get("data").toString(), appConfig.getPrivateKey()));
 		newHashMap.put("timestamp", DateHelper.getDateTime());
 		String zljNotifyUrl = appConfig.getZljNotifyUrl();
