@@ -39,8 +39,7 @@ public class ResourceExceptionMapper implements ExceptionMapper<Exception> {
 		ResultVo vo = new ResultVo(false);
 		vo.setErrorCode(statusEnum.getCode());
 		vo.setMessage(statusEnum.getMsg());
-		JSONObject parseObject = JSONObject.parseObject(vo.toString());
-		parseObject.put("statusCode", statusCode.getStatusCode());
-		return Response.status(200).entity(parseObject).build();
+		vo.setStatusCode(statusCode.getStatusCode() + "");
+		return Response.status(200).entity(vo).build();
 	}
 }

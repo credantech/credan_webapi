@@ -21,4 +21,6 @@ public final class Global {
 	public static final int RESULT_ENCRYPT_YES = 1;
 	/** 请求参数判断响应结果不加密 */
 	public static final int RESULT_ENCRYPT_NO = 0;
+
+	public static final String USER_ID = "userId";
 }

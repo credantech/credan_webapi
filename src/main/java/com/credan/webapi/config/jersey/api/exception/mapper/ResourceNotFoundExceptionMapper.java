@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 
@@ -32,9 +31,8 @@ public class ResourceNotFoundExceptionMapper implements ExceptionMapper<javax.ws
 		ResultVo vo = new ResultVo(false);
 		vo.setErrorCode(statusEnum.getCode());
 		vo.setMessage(statusEnum.getMsg());
-		JSONObject parseObject = JSONObject.parseObject(vo.toString());
-		parseObject.put("statusCode", statusCode.getStatusCode());
-		return Response.status(200).entity(parseObject).build();
+		vo.setStatusCode(statusCode.getStatusCode() + "");
+		return Response.status(200).entity(vo).build();
 	}
 
 }

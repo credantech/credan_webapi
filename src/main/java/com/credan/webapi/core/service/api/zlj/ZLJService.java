@@ -64,6 +64,7 @@ public class ZLJService extends AbstractBasicService {
 	@Autowired
 	private SignService signService;
 
+
 	/**
 	 * 商户跳入解析数据（该接口由前端转发进入）
 	 * 
@@ -76,10 +77,10 @@ public class ZLJService extends AbstractBasicService {
 		RequestVo requestVo = signService.processInputParams(JSONObject.parseObject(params, RequestVo.class));
 		JSONObject param = JSONObject.parseObject(requestVo.toString());
 		checkNotNull(param, "merchantId", "data");
-
 		String merchantId = param.getString("merchantId");
 		JSONObject data = param.getJSONObject("data");
 		checkNotNull(data, "orderId", "tenorApplied", "itemPrice", "itemAmt", "itemName");
+		
 		String orderId = data.getString("orderId");
 		Integer tenorApplied = data.getInteger("tenorApplied");
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
