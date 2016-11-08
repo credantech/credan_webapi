@@ -59,11 +59,11 @@ public class SignService extends AbstractBasicService {
 		try {
 			verify = RSAHelper.verify(data, merchantPublicKey, sign);
 		} catch (Exception e) {
-			log.error("验签异常 ======", e);
+			log.error("RSA验签异常 ======", e);
 			throw new ParamException(StatusEnum.INVALID_SIGN);
 		}
 		if (!verify) {
-			log.debug("验签失败=========sign:{}", sign);
+			log.debug("RSA验签失败=========sign:{}", sign);
 			throw new ParamException(StatusEnum.INVALID_SIGN);
 		}
 
@@ -71,13 +71,15 @@ public class SignService extends AbstractBasicService {
 		try {
 			decryptData = DESHelper.decrypt(data, desKey);
 		} catch (Exception e) {
-			log.error("解码异常======{}", e);
+			log.error("DES解码异常======{}", e);
 			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
 		}
 		boolean checkStatus = merchantInfoService.checkStatus(requestVo.getMerchantId());
 		if (!checkStatus) {
 			log.error("商户ID无效=========MerchantId:{}", requestVo.getMerchantId());
-			throw new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR);
+			ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR);
+			paramException.setMsg("商户ID无效");
+			throw paramException;
 		}
 		requestVo.setData(JSONObject.parseObject(decryptData));
 		return requestVo;

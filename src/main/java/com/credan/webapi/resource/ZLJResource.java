@@ -64,10 +64,11 @@ public class ZLJResource extends BasicResource {
 	 * 
 	 * @param params
 	 * @return
+	 * @throws Exception 
 	 */
 	@POST
 	@Path("/notify")
-	public Response notify(String params) {
+	public Response notify(String params) throws Exception {
 		ResultVo resultVo = zLJService.notify(toJson(params));
 		return toResponse(resultVo);
 	}

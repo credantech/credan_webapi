@@ -11,6 +11,7 @@ import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 /**
  * 抽象父类
@@ -26,19 +27,22 @@ public class AbstractBasicService {
 	 * @param objects
 	 */
 	public void checkNotNull(JSONObject param, String... keys) {
-		Function<String[], Boolean> function = new Function<String[], Boolean>() {
+		Function<String[], String> function = new Function<String[], String>() {
 			@Override
-			public Boolean apply(String[] arg0) {
+			public String apply(String[] arg0) {
 				for (String key : arg0) {
-					Preconditions.checkNotNull(param.get(key), key);
+					try {
+						Preconditions.checkNotNull(param.get(key), key);
+					} catch (Exception e) {
+						return key;
+					}
 				}
-				return true;
+				return null;
 			}
 		};
-		try {
-			function.apply(keys);
-		} catch (Exception e) {
-			throw new ParamException(StatusEnum.PROPERTY_REQUIRED, e.getMessage());
+		String keyFlag = null;
+		if (!(Strings.isNullOrEmpty(keyFlag = function.apply(keys)))) {
+			throw new ParamException(StatusEnum.PROPERTY_REQUIRED, keyFlag);
 		}
 	}
 

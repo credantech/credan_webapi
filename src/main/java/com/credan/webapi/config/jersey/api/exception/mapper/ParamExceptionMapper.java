@@ -30,10 +30,10 @@ public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
 	@Override
 	public Response toResponse(ParamException arg0) {
 		StatusEnum statusEnum = arg0.getStatusEnum();
-		log.error(arg0.getMessage(), arg0);
+		log.error(arg0.getMsg(), arg0);
 		ResultVo vo = new ResultVo(false);
 		vo.setErrorCode(statusEnum.getCode());
-		vo.setMessage(arg0.getMessage());
+		vo.setMessage(arg0.getMsg());
 		vo.setStatusCode(StatusCodeEnum.WRONG_PARAM.getCode());
 		return Response.status(200).entity(vo).build();
 	}

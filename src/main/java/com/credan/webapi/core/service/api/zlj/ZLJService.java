@@ -8,6 +8,7 @@ package com.credan.webapi.core.service.api.zlj;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,8 @@ import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
 import com.credan.webapi.comm.util.DateHelper;
+import com.credan.webapi.comm.util.security.DESHelper;
+import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
@@ -38,6 +41,7 @@ import com.credan.webapi.core.service.security.SignService;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,6 +86,7 @@ public class ZLJService extends AbstractBasicService {
 
 		String orderId = data.getString("orderId");
 		Integer tenorApplied = data.getInteger("tenorApplied");
+		tenorApplied = null == tenorApplied ? 0 : tenorApplied;
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
 		Integer itemAmt = data.getInteger("itemAmt");
 		String itemName = data.getString("itemName");
@@ -157,9 +162,10 @@ public class ZLJService extends AbstractBasicService {
 	 * 
 	 * @param param
 	 * @return
+	 * @throws Exception 
 	 */
 	@Transactional(readOnly = false)
-	public ResultVo notify(JSONObject param) {
+	public ResultVo notify(JSONObject param) throws Exception {
 		checkNotNull(param, "projectId");
 		String projectId = param.getString("projectId");
 
@@ -171,9 +177,18 @@ public class ZLJService extends AbstractBasicService {
 		JSONObject reqParam = new JSONObject();
 		reqParam.put("orderId", orderDetail.getOrderId());
 		reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
-		reqParam.put("ext", null);
+		JSONObject ext = new JSONObject();
+		ext.put("status", "PAID");
+		ext.put("statusDesc", "审批通过已付款");
+		reqParam.put("ext", ext);
+		
+		Map<String, Object> newHashMap = Maps.newHashMap();
+		newHashMap.put("data", DESHelper.encrypt(reqParam.toString(), appConfig.getDesKey()));
+		newHashMap.put("sign", RSAHelper.sign(newHashMap.get("data").toString(), appConfig.getPrivateKey()));
+		newHashMap.put("timestamp", DateHelper.getDateTime());
 		String zljNotifyUrl = appConfig.getZljNotifyUrl();
-		String post = restTemplate.postForObject(zljNotifyUrl, reqParam, String.class);
+		String jsonString = JSONObject.toJSONString(newHashMap);
+		String post = restTemplate.postForObject(zljNotifyUrl, jsonString, String.class);
 		log.debug(" post: {}", post);
 
 		Date currentTime = DateHelper.getCurrentTime();
