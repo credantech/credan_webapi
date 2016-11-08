@@ -13,6 +13,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import com.credan.webapi.comm.util.Base64Util;
 
+
 public final class DESHelper {
 
 	private final static String SECRETKEYSPEC_ALGORITHM = "DES";
@@ -91,10 +92,4 @@ public final class DESHelper {
 		SecretKey secretKey = kg.generateKey();
 		return Base64Util.encodeBase64String(secretKey.getEncoded());
 	}
-//	
-//	public static void main(String[] args) throws Exception {
-//		String seed = "Credanzl";
-//		String initKey = initKey(seed);
-//		System.err.println(initKey);
-//	}
 }

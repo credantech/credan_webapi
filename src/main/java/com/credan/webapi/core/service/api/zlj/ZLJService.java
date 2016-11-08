@@ -68,7 +68,6 @@ public class ZLJService extends AbstractBasicService {
 	@Autowired
 	private CredanService CredanService;
 
-
 	/**
 	 * 商户跳入解析数据（该接口由前端转发进入）
 	 * 
@@ -84,7 +83,7 @@ public class ZLJService extends AbstractBasicService {
 		String merchantId = param.getString("merchantId");
 		JSONObject data = param.getJSONObject("data");
 		checkNotNull(data, "orderId", "itemPrice", "itemAmt", "itemName");
-		
+
 		String orderId = data.getString("orderId");
 		Integer tenorApplied = data.getInteger("tenorApplied");
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
@@ -163,7 +162,7 @@ public class ZLJService extends AbstractBasicService {
 	 * @param param
 	 * @return
 	 */
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = false)
 	public ResultVo notify(JSONObject param) {
 		checkNotNull(param, "projectId");
 		String projectId = param.getString("projectId");
@@ -179,6 +178,7 @@ public class ZLJService extends AbstractBasicService {
 		reqParam.put("ext", null);
 		String zljNotifyUrl = appConfig.getZljNotifyUrl();
 		String post = restTemplate.postForObject(zljNotifyUrl, reqParam, String.class);
+		log.debug(" post: {}", post);
 
 		Date currentTime = DateHelper.getCurrentTime();
 		orderDetail.setCallBackCount(orderDetail.getCallBackCount() + 1);
