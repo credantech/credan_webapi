@@ -8,7 +8,6 @@ package com.credan.webapi.core.service.api.zlj;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -195,11 +194,14 @@ public class ZLJService extends AbstractBasicService {
 		reqParam.put("ext", ext);
 		
 		Map<String, Object> newHashMap = Maps.newHashMap();
-		newHashMap.put("data", AESHelper.encrypt(reqParam.toString(), appConfig.getDesKey()));
-		newHashMap.put("sign", RSAHelper.sign(newHashMap.get("data").toString(), appConfig.getPrivateKey()));
+		String encrypt = AESHelper.encrypt(reqParam.toString(), appConfig.getDesKey());
+		newHashMap.put("data", encrypt );
+		newHashMap.put("sign", RSAHelper.sign(encrypt, appConfig.getPrivateKey()));
 		newHashMap.put("timestamp", DateHelper.getDateTime());
+		System.err.println(RSAHelper.verify(encrypt, appConfig.getPublicKey(), newHashMap.get("sign").toString()));
 		String zljNotifyUrl = appConfig.getZljNotifyUrl();
 		String jsonString = JSONObject.toJSONString(newHashMap);
+		System.err.println(jsonString);
 		String post = restTemplate.postForObject(zljNotifyUrl, jsonString, String.class);
 		log.debug(" post: {}", post);
 
