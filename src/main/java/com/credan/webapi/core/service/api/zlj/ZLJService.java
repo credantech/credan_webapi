@@ -79,7 +79,7 @@ public class ZLJService extends AbstractBasicService {
 		checkNotNull(param, "merchantId", "data");
 		String merchantId = param.getString("merchantId");
 		JSONObject data = param.getJSONObject("data");
-		checkNotNull(data, "orderId", "tenorApplied", "itemPrice", "itemAmt", "itemName");
+		checkNotNull(data, "orderId", "itemPrice", "itemAmt", "itemName");
 		
 		String orderId = data.getString("orderId");
 		Integer tenorApplied = data.getInteger("tenorApplied");
@@ -114,8 +114,10 @@ public class ZLJService extends AbstractBasicService {
 		log.setUnit(unit);
 		orderDetailLogService.save(log);
 
+		Map<String, Object> resultData = data.toJavaObject(data, Map.class);
+		resultData.put("installments", Lists.newArrayList());
 		ResultVo resultVo = new ResultVo(true);
-		resultVo.putValue(data.toJavaObject(data, Map.class));
+		resultVo.putValue(resultData);
 		return resultVo;
 	}
 
