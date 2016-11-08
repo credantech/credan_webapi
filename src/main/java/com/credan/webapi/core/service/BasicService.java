@@ -23,7 +23,7 @@ import com.credan.webapi.core.dao.entity.BasicEntity;
 public abstract class BasicService<D extends MyBatisDao<T>, T extends BasicEntity> extends AbstractBasicService {
 
 	@Autowired
-	private D dao;
+	protected D dao;
 
 	protected int saveSelective(T t) {
 		if (t.isNewRecord()) {

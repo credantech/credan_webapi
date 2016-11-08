@@ -54,6 +54,24 @@ public interface ConstantEnums {
 		public String getMsg() {
 			return msg;
 		}
+	}
 
+	/**
+	 * 状态(启用：ENABLED、禁用：DISABLE)
+	 * 
+	 * @author Mond
+	 *
+	 */
+	public enum SwitchEnum {
+		ENABLED, DISABLE;
+	}
+	/**
+	 * 
+	 * @author Mond
+	 *
+	 */
+	public enum FileClassifyEnum{
+		//手持身份证
+		HANDHELD_ID;
 	}
 }

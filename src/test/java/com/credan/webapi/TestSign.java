@@ -23,7 +23,7 @@ public class TestSign extends ApplicationTests {
 	public void testSign() throws Exception {
 		JSONObject jsonObject = new JSONObject();
 		JSONObject param = JSONObject.parseObject(
-				"{\"itemName\":\"***\",\"itemAmt\":1,\"itemPrice\":200.37,\"tenorApplied\":\"1\",\"orderId\":\"123\"}");
+				"{\"orderIds\":[\"123\"]}");
 		jsonObject.put("merchantId", "1111");
 		jsonObject.put("orderId", "123");
 		String jsonString = param.toJSONString();

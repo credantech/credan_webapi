@@ -9,12 +9,20 @@ package com.credan.webapi.config.jersey.api.exception;
 import com.credan.webapi.config.exception.CustomException;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * 参数异常
  * 
  * @author Mond
  * @version 1.0.0, $Date: 2016年11月2日 上午11:43:35 $
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Builder
 public class ParamException extends CustomException {
 
 	/**
@@ -40,20 +48,38 @@ public class ParamException extends CustomException {
 		this(statusEnum, "");
 	}
 
-	public StatusEnum getStatusEnum() {
-		return statusEnum;
+	public ParamException() {
+		this(StatusEnum.PROPERTY_REQUIRED, "");
 	}
 
-	public void setStatusEnum(StatusEnum statusEnum) {
+	public ParamException(StatusEnum statusEnum, String message) {
+		super();
 		this.statusEnum = statusEnum;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
 		this.message = message;
 	}
-	
+
+	public ParamException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
+		super(arg0, arg1, arg2, arg3);
+		this.statusEnum = StatusEnum.PROPERTY_REQUIRED;
+		this.message = arg1.getMessage();
+	}
+
+	public ParamException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+		this.statusEnum = StatusEnum.PROPERTY_REQUIRED;
+		this.message = arg1.getMessage();
+	}
+
+	public ParamException(String arg0) {
+		super(arg0);
+		this.statusEnum = StatusEnum.PROPERTY_REQUIRED;
+		this.message = arg0;
+	}
+
+	public ParamException(Throwable arg0) {
+		super(arg0);
+		this.statusEnum = StatusEnum.PROPERTY_REQUIRED;
+		this.message = arg0.getMessage();
+	}
+
 }

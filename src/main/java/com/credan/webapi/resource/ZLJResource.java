@@ -1,5 +1,5 @@
 /**
- * @(#) ZLJApiResource.java
+ * @(#) ZLJResource.java
  * 
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
@@ -27,7 +27,7 @@ import com.credan.webapi.resource.base.BasicResource;
  */
 @Path("/v1/zlj")
 @Produces(MediaType.APPLICATION_JSON)
-public class ZLJApiResource extends BasicResource {
+public class ZLJResource extends BasicResource {
 
 	@Autowired
 	private ZLJService zLJService;
@@ -41,7 +41,7 @@ public class ZLJApiResource extends BasicResource {
 	@POST
 	@Path("/index")
 	public Response index(String params) {
-		ResultVo resultVo = zLJService.index(toJson(params));
+		ResultVo resultVo = zLJService.index(params);
 		return toResponse(resultVo);
 	}
 

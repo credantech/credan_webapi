@@ -3,6 +3,7 @@ package com.credan.webapi.core.service.security;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.credan.webapi.core.service.AbstractBasicService;
+import com.credan.webapi.core.service.merchant.MerchantInfoService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,9 +32,12 @@ public class SignService extends AbstractBasicService {
 	@Value("${zlj_public_key}")
 	private String merchantPublicKey;
 
+	@Autowired
+	protected MerchantInfoService merchantInfoService;
+
 	public RequestVo processInputParams(RequestVo requestVo) {
 		JSONObject params = JSONObject.parseObject(requestVo.toString());
-		checkNotNull(params, "sign", "data", "timestamp");
+		checkNotNull(params, "sign", "data", "timestamp", "merchantId");
 		String data = requestVo.getData().toString();
 		String sign = requestVo.getSign();
 		String timestamp = requestVo.getTimestamp();
@@ -68,6 +73,11 @@ public class SignService extends AbstractBasicService {
 		} catch (Exception e) {
 			log.error("解码异常======{}", e);
 			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
+		}
+		boolean checkStatus = merchantInfoService.checkStatus(requestVo.getMerchantId());
+		if (!checkStatus) {
+			log.error("商户ID无效=========MerchantId:{}", requestVo.getMerchantId());
+			throw new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR);
 		}
 		requestVo.setData(JSONObject.parseObject(decryptData));
 		return requestVo;

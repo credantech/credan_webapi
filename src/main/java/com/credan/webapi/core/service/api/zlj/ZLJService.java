@@ -26,6 +26,7 @@ import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
 import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.config.AppConfig;
+import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
 import com.credan.webapi.core.dao.entity.order.OrderDetailLog;
 import com.credan.webapi.core.dao.entity.order.OrderDetailVo;
@@ -33,6 +34,7 @@ import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
 import com.credan.webapi.core.service.AbstractBasicService;
 import com.credan.webapi.core.service.order.OrderDetailLogService;
 import com.credan.webapi.core.service.order.OrderDetailService;
+import com.credan.webapi.core.service.security.SignService;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -59,6 +61,9 @@ public class ZLJService extends AbstractBasicService {
 	private AppConfig appConfig;
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+	private SignService signService;
+
 
 	/**
 	 * 商户跳入解析数据（该接口由前端转发进入）
@@ -68,12 +73,14 @@ public class ZLJService extends AbstractBasicService {
 	 */
 	@SuppressWarnings({ "unchecked", "static-access" })
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-	public ResultVo index(JSONObject param) {
-		
+	public ResultVo index(String params) {
+		RequestVo requestVo = signService.processInputParams(JSONObject.parseObject(params, RequestVo.class));
+		JSONObject param = JSONObject.parseObject(requestVo.toString());
 		checkNotNull(param, "merchantId", "data");
 		String merchantId = param.getString("merchantId");
 		JSONObject data = param.getJSONObject("data");
 		checkNotNull(data, "orderId", "tenorApplied", "itemPrice", "itemAmt", "itemName");
+		
 		String orderId = data.getString("orderId");
 		Integer tenorApplied = data.getInteger("tenorApplied");
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
@@ -120,8 +127,9 @@ public class ZLJService extends AbstractBasicService {
 	 */
 	@Transactional(readOnly = true)
 	public ResultVo findOrders(JSONObject param) {
-		checkNotNull(param, "orderIds");
-		JSONArray orderIds = param.getJSONArray("orderIds");
+		JSONObject data = param.getJSONObject("data");
+		checkNotNull(data, "orderIds");
+		JSONArray orderIds = data.getJSONArray("orderIds");
 		int total = 0;
 		if (null == orderIds || orderIds.size() == 0) {
 			ResultVo resultVo = new ResultVo(true);
@@ -189,7 +197,5 @@ public class ZLJService extends AbstractBasicService {
 		resultVo.putValue("status", post);
 		return resultVo;
 	}
-	
-	
 
 }
