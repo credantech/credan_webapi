@@ -25,11 +25,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
+import com.credan.webapi.comm.util.Arith;
 import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.security.AESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
+import com.credan.webapi.config.jersey.api.entity.StatusEnum;
+import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
 import com.credan.webapi.core.dao.entity.order.OrderDetailLog;
 import com.credan.webapi.core.dao.entity.order.OrderDetailVo;
@@ -40,6 +43,7 @@ import com.credan.webapi.core.service.order.OrderDetailLogService;
 import com.credan.webapi.core.service.order.OrderDetailService;
 import com.credan.webapi.core.service.security.SignService;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -78,7 +82,6 @@ public class ZLJService extends AbstractBasicService {
 	 * @param param
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "static-access" })
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public ResultVo index(String params) {
 		RequestVo requestVo = signService.processInputParams(JSONObject.parseObject(params, RequestVo.class));
@@ -92,7 +95,13 @@ public class ZLJService extends AbstractBasicService {
 		Integer tenorApplied = data.getInteger("tenorApplied");
 		tenorApplied = null == tenorApplied ? 0 : tenorApplied;
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
+		try {
+			Preconditions.checkArgument(itemPrice.compareTo(BigDecimal.ZERO) > 0, "单价错误");
+		} catch (Exception e) {
+			throw new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "itemPrice");
+		}
 		Integer itemAmt = data.getInteger("itemAmt");
+		itemAmt = itemAmt < 1 ? 1 : itemAmt;
 		String itemName = data.getString("itemName");
 
 		String unit = ConstantEnums.TermUnitEnum.M.toString();
@@ -105,7 +114,7 @@ public class ZLJService extends AbstractBasicService {
 		record.setCount(Long.valueOf(itemAmt));
 		record.setMerchantId(merchantId);
 		record.setName(itemName);
-		record.setOrderAmount(itemPrice);
+		record.setOrderAmount(Arith.mul(itemPrice, new BigDecimal(itemAmt)));
 		record.setPrice(itemPrice);
 		record.setTerm(tenorApplied == null ? null : Long.valueOf(tenorApplied));
 		record.setUnit(unit);
@@ -168,7 +177,6 @@ public class ZLJService extends AbstractBasicService {
 	 * @return
 	 * @throws Exception 
 	 */
-	@Transactional(readOnly = false)
 	public ResultVo notify(JSONObject param) throws Exception {
 		checkNotNull(param, "projectId");
 		String projectId = param.getString("projectId");
