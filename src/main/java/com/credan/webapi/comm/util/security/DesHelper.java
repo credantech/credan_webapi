@@ -31,14 +31,4 @@ public final class DESHelper {
 		return new String(output);
 	}
 
-	public static void main(String[] args) throws Exception {
-		String key = "1234567891234567";
-		String data = "example";
-
-		System.out.println(encrypt(data, key));
-
-		System.out.println(decrypt(encrypt(data, key), key));
-
-	}
-
 }

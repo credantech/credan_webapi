@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.util.DateHelper;
-import com.credan.webapi.comm.util.security.DESHelper;
+import com.credan.webapi.comm.util.security.DesHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
@@ -39,7 +39,7 @@ public class EncryptResponseService extends AbstractBasicService {
 	 */
 	public ResponseVo encryResponse(String response, RequestVo requestParam) throws Exception {
 		ResponseVo responseParam = JSONObject.parseObject(response, ResponseVo.class);
-		String encrypt = DESHelper.encrypt(responseParam.getData().toString(), appConfig.getDesKey());
+		String encrypt = DesHelper.encrypt(responseParam.getData().toString(), appConfig.getDesKey());
 		String sign = RSAHelper.sign(encrypt, appConfig.getPrivateKey());
 		responseParam.setData(encrypt);
 		responseParam.setSign(sign);

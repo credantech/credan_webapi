@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.util.DateHelper;
-import com.credan.webapi.comm.util.security.DESHelper;
+import com.credan.webapi.comm.util.security.DesHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 
 public class TestSign extends ApplicationTests {
@@ -27,7 +27,7 @@ public class TestSign extends ApplicationTests {
 		jsonObject.put("merchantId", "1111");
 		jsonObject.put("orderId", "123");
 		String jsonString = param.toJSONString();
-		String encrypt = DESHelper.encrypt(jsonString, desKey);
+		String encrypt = DesHelper.encrypt(jsonString, desKey);
 		System.err.println("encrypt : " + encrypt);
 		String sign = RSAHelper.sign(encrypt, zljPrivateKey);
 		System.err.println("sign :" + sign);

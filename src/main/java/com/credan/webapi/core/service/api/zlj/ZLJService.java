@@ -35,6 +35,7 @@ import com.credan.webapi.core.dao.entity.order.OrderDetailLog;
 import com.credan.webapi.core.dao.entity.order.OrderDetailVo;
 import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
 import com.credan.webapi.core.service.AbstractBasicService;
+import com.credan.webapi.core.service.app.CredanService;
 import com.credan.webapi.core.service.order.OrderDetailLogService;
 import com.credan.webapi.core.service.order.OrderDetailService;
 import com.credan.webapi.core.service.security.SignService;
@@ -67,6 +68,9 @@ public class ZLJService extends AbstractBasicService {
 	private RestTemplate restTemplate;
 	@Autowired
 	private SignService signService;
+	
+	@Autowired
+	private CredanService CredanService;
 
 	/**
 	 * 商户跳入解析数据（该接口由前端转发进入）
@@ -103,7 +107,7 @@ public class ZLJService extends AbstractBasicService {
 		record.setName(itemName);
 		record.setOrderAmount(itemPrice);
 		record.setPrice(itemPrice);
-		record.setTerm(Long.valueOf(tenorApplied));
+		record.setTerm(tenorApplied == null ? null : Long.valueOf(tenorApplied));
 		record.setUnit(unit);
 		orderDetailService.save(record);
 
@@ -117,9 +121,9 @@ public class ZLJService extends AbstractBasicService {
 		log.setTerm(Long.valueOf(tenorApplied));
 		log.setUnit(unit);
 		orderDetailLogService.save(log);
-
-		Map<String, Object> resultData = data.toJavaObject(data, Map.class);
-		resultData.put("installments", Lists.newArrayList());
+		
+		Map<String, Object> resultData = CredanService.calculate(data);
+		
 		ResultVo resultVo = new ResultVo(true);
 		resultVo.putValue(resultData);
 		return resultVo;
