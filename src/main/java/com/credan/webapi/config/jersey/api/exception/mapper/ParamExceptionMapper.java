@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.config.jersey.api.entity.StatusCodeEnum;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;

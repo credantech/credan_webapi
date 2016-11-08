@@ -9,7 +9,6 @@ package com.credan.webapi.config.jersey.api.exception;
 import com.credan.webapi.config.exception.CustomException;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

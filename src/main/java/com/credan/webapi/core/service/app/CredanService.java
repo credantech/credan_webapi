@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CredanService extends AbstractBasicService {
 	
-	
 	public void register(JSONObject jsonObject) {
 		
 	}
