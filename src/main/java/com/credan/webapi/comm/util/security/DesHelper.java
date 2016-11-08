@@ -1,9 +1,12 @@
 package com.credan.webapi.comm.util.security;
 
 import java.security.Key;
+import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
@@ -67,4 +70,31 @@ public final class DESHelper {
 		byte result[] = Base64Util.decryptBASE64(input);
 		return new String(desDecrypt(result, desKey), CHAR_SET);
 	}
+	
+	/**
+	 * 初始化一个DESKey
+	 * 
+	 * @param seed
+	 * @return
+	 * @throws Exception
+	 */
+	public static String initKey(String seed) throws Exception {
+		SecureRandom secureRandom = null;
+
+		if (seed != null) {
+			secureRandom = new SecureRandom(Base64Util.decryptBASE64(seed));
+		} else {
+			secureRandom = new SecureRandom();
+		}
+		KeyGenerator kg = KeyGenerator.getInstance(SECRETKEYSPEC_ALGORITHM);
+		kg.init(secureRandom);
+		SecretKey secretKey = kg.generateKey();
+		return Base64Util.encodeBase64String(secretKey.getEncoded());
+	}
+//	
+//	public static void main(String[] args) throws Exception {
+//		String seed = "Credanzl";
+//		String initKey = initKey(seed);
+//		System.err.println(initKey);
+//	}
 }

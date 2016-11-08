@@ -13,7 +13,6 @@ public class CredanService extends AbstractBasicService {
 	
 	
 	public void register(JSONObject jsonObject) {
-		// TODO Auto-generated method stub
 		
 	}
 

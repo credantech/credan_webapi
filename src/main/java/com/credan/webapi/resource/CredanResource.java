@@ -27,4 +27,13 @@ public class CredanResource extends BasicResource{
 		return null;
 	}
 	
+	
+	@POST
+	@Path("/calculate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response calculate(String body){
+		JSONObject jsonObject = JSONObject.parseObject(body);
+		return null;
+	}
+	
 }
