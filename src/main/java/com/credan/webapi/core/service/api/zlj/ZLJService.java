@@ -32,15 +32,19 @@ import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
+import com.credan.webapi.core.dao.entity.ci.InstallmentProject;
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
 import com.credan.webapi.core.dao.entity.order.OrderDetailLog;
 import com.credan.webapi.core.dao.entity.order.OrderDetailVo;
+import com.credan.webapi.core.dao.entity.sys.SysDictionary;
 import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
 import com.credan.webapi.core.service.AbstractBasicService;
 import com.credan.webapi.core.service.app.CredanService;
+import com.credan.webapi.core.service.ci.InstallmentProjectService;
 import com.credan.webapi.core.service.order.OrderDetailLogService;
 import com.credan.webapi.core.service.order.OrderDetailService;
 import com.credan.webapi.core.service.security.SignService;
+import com.credan.webapi.core.service.sys.SysDictionaryService;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -71,9 +75,12 @@ public class ZLJService extends AbstractBasicService {
 	private RestTemplate restTemplate;
 	@Autowired
 	private SignService signService;
-	
+	@Autowired
+	private InstallmentProjectService installmentProjectService;
 	@Autowired
 	private CredanService CredanService;
+	@Autowired
+	private SysDictionaryService sysDictionaryService;
 
 	/**
 	 * 商户跳入解析数据（该接口由前端转发进入）
@@ -129,9 +136,9 @@ public class ZLJService extends AbstractBasicService {
 		log.setTerm(Long.valueOf(tenorApplied));
 		log.setUnit(unit);
 		orderDetailLogService.save(log);
-		
+
 		Map<String, Object> resultData = CredanService.calculate(data);
-		
+
 		ResultVo resultVo = new ResultVo(true);
 		resultVo.putValue(resultData);
 		return resultVo;
@@ -174,7 +181,7 @@ public class ZLJService extends AbstractBasicService {
 	 * 
 	 * @param param
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public ResultVo notify(JSONObject param) throws Exception {
 		checkNotNull(param, "projectId");
@@ -185,23 +192,26 @@ public class ZLJService extends AbstractBasicService {
 			log.error("notify projectId find OrderDetail is null , projectId : {}", projectId);
 			return new ResultVo(false);
 		}
+		InstallmentProject findOne = installmentProjectService.findOne(projectId);
+		String auditStatus = findOne.getAuditStatus();
+
 		JSONObject reqParam = new JSONObject();
 		reqParam.put("orderId", orderDetail.getOrderId());
 		reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
 		JSONObject ext = new JSONObject();
-		ext.put("status", "PAID");
-		ext.put("statusDesc", "审批通过已付款");
+		ext.put("status", auditStatus);
+		SysDictionary sysDictionary = sysDictionaryService.findOneByDictTypeAndDictCode("ci_product_audit_status",
+				auditStatus);
+		ext.put("statusDesc", null == sysDictionary ? "" : sysDictionary.getDictName());
 		reqParam.put("ext", ext);
-		
+
 		Map<String, Object> newHashMap = Maps.newHashMap();
 		String encrypt = AESHelper.encrypt(reqParam.toString(), appConfig.getDesKey());
-		newHashMap.put("data", encrypt );
+		newHashMap.put("data", encrypt);
 		newHashMap.put("sign", RSAHelper.sign(encrypt, appConfig.getPrivateKey()));
 		newHashMap.put("timestamp", DateHelper.getDateTime());
-		System.err.println(RSAHelper.verify(encrypt, appConfig.getPublicKey(), newHashMap.get("sign").toString()));
 		String zljNotifyUrl = appConfig.getZljNotifyUrl();
 		String jsonString = JSONObject.toJSONString(newHashMap);
-		System.err.println(jsonString);
 		String post = restTemplate.postForObject(zljNotifyUrl, jsonString, String.class);
 		log.debug(" post: {}", post);
 
