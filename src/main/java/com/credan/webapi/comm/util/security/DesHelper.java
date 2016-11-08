@@ -14,7 +14,7 @@ import javax.crypto.spec.IvParameterSpec;
 import com.credan.webapi.comm.util.Base64Util;
 
 
-public final class DESHelper {
+public final class DesHelper {
 
 	private final static String SECRETKEYSPEC_ALGORITHM = "DES";
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.util.DateHelper;
-import com.credan.webapi.comm.util.security.DESHelper;
+import com.credan.webapi.comm.util.security.DesHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
@@ -69,7 +69,7 @@ public class SignService extends AbstractBasicService {
 
 		String decryptData;
 		try {
-			decryptData = DESHelper.decrypt(data, desKey);
+			decryptData = DesHelper.decrypt(data, desKey);
 		} catch (Exception e) {
 			log.error("解码异常======{}", e);
 			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
