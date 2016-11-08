@@ -26,7 +26,7 @@ import com.credan.webapi.resource.base.BasicResource;
  * @author Mond
  * @version 1.0.0, $Date: 2016年9月22日 下午6:15:54 $
  */
-@Path("/file")
+@Path("/v1/file")
 @Component
 public class FileResource extends BasicResource {
 
