@@ -148,7 +148,7 @@ public class ZLJService extends AbstractBasicService {
 		log.setTerm(Long.valueOf(tenorApplied));
 		log.setUnit(unit);
 		orderDetailLogService.save(log);
-
+		data.put("projectId", record.getProjectId());
 		Map<String, Object> resultData = CredanService.calculate(data);
 
 		ResultVo resultVo = new ResultVo(true);

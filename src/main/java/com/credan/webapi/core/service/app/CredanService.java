@@ -32,6 +32,7 @@ public class CredanService extends AbstractBasicService {
 		Integer itemAmt = data.getInteger("itemAmt");
 		String merchantId = data.getString("merchantId");
 		String orderId = data.getString("orderId");
+		String projectId = data.getString("projectId");
 		
 		BigDecimal orderAmount = Arith.mul(itemPrice, new BigDecimal(itemAmt));
 		@SuppressWarnings("static-access")
@@ -42,7 +43,7 @@ public class CredanService extends AbstractBasicService {
 		String token = UUIDUtils.getUUID();
 		MerchantUserEntity.MerchantUserEntityBuilder builder = MerchantUserEntity.builder();
 		builder.token(token).orderId(orderId).createTime(DateHelper.getCurrentTime()).installment(orderAmount.doubleValue()).orderAmount(orderAmount.doubleValue())
-		.merchantId(merchantId).desc("inputInfo");
+		.merchantId(merchantId).desc("inputInfo").projectId(projectId);
 		MerchantUserEntity entity = builder.build();
 		merchantUserReposityService.save(entity);
 		map.put("token", token);
