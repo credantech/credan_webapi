@@ -86,5 +86,6 @@ public class ZLJResource extends BasicResource {
 		ResultVo resultVo = zLJService.jobNotify(params);
 		return toResponse(resultVo);
 	}
+	
 
 }

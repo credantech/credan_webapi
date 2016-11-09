@@ -27,6 +27,7 @@ import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
 import com.credan.webapi.comm.util.Arith;
 import com.credan.webapi.comm.util.DateHelper;
+import com.credan.webapi.comm.util.UUIDUtils;
 import com.credan.webapi.comm.util.security.AESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.AppConfig;
@@ -115,7 +116,17 @@ public class ZLJService extends AbstractBasicService {
 		OrderDetail record = orderDetailDao.findOneByOrderId(orderId);
 		if (null == record) {
 			record = new OrderDetail();
+			record.setProjectId(UUIDUtils.getUUID());
+		}else {
+			InstallmentProject findOne = installmentProjectService.findOne(record.getProjectId());
+			if (null != findOne) {
+				ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "orderId");
+				paramException.setMsg("订单编号已被占用");
+				throw paramException;
+			}
 		}
+		
+		
 		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
 		record.setCount(Long.valueOf(itemAmt));
