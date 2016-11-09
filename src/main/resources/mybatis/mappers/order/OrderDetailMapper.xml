@@ -57,7 +57,7 @@
 		project_id, name, type,
 		price,
 		order_amount, term,
-		unit, count, remarks, call_back_time,
+		unit, count, remarks, call_back_time,next_call_back_time,
 		call_back_count, call_back_result, ext,
 		version, memo, del_flag,
 		created_time, last_updated)
@@ -70,6 +70,7 @@
 		#{unit,jdbcType=CHAR},
 		#{count,jdbcType=BIGINT}, #{remarks,jdbcType=VARCHAR},
 		#{callBackTime,jdbcType=TIMESTAMP},
+		#{nextCallBackTime,jdbcType=TIMESTAMP},
 		#{callBackCount,jdbcType=BIGINT}, #{callBackResult,jdbcType=VARCHAR}, #{ext,jdbcType=VARCHAR},
 		#{version,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
 		#{createdTime,jdbcType=TIMESTAMP}, #{lastUpdated,jdbcType=TIMESTAMP})
@@ -305,6 +306,7 @@
 		count = #{count,jdbcType=BIGINT},
 		remarks = #{remarks,jdbcType=VARCHAR},
 		call_back_time = #{callBackTime,jdbcType=TIMESTAMP},
+		next_call_back_time = #{nextCallBackTime,jdbcType=TIMESTAMP},
 		call_back_count =
 		#{callBackCount,jdbcType=BIGINT},
 		call_back_result = #{callBackResult,jdbcType=VARCHAR},
@@ -346,6 +348,14 @@
 		<foreach collection="list" item="item" open="(" close=")" separator=",">
 			#{item}
 		</foreach>
+	</select>
+	
+	<!-- 查询job通知状态变更的数据 -->
+	<select id="findList4Job" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from merchant_order_detail
+		where next_call_back_time > 0  ORDER BY next_call_back_time asc limit 20
 	</select>
 
 </mapper>

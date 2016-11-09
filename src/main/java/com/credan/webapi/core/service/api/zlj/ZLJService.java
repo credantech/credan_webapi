@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -177,6 +178,33 @@ public class ZLJService extends AbstractBasicService {
 	}
 
 	/**
+	 * 跑批回调
+	 * 
+	 * @param param
+	 * @return
+	 */
+	public ResultVo jobNotify(String param) {
+		List<OrderDetail> findList4Job = orderDetailDao.findList4Job();
+		if (CollectionUtils.isNotEmpty(findList4Job)) {
+			for (OrderDetail orderDetail : findList4Job) {
+				Date nextCallBackTime = orderDetail.getNextCallBackTime();
+				int compare = DateHelper.compare(DateHelper.getCurrentTime(), nextCallBackTime);
+				if (compare < 0) {
+					break;
+				}
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("projectId", orderDetail.getProjectId());
+				try {
+					notify(jsonObject);
+				} catch (Exception e) {
+					log.error("找靓机项目状态变更回调通知异常 ： ", e);
+				}
+			}
+		}
+		return new ResultVo(true);
+	}
+
+	/**
 	 * 回调通知合作方
 	 * 
 	 * @param param
@@ -220,18 +248,23 @@ public class ZLJService extends AbstractBasicService {
 		orderDetail.setCallBackResult(Strings.isNullOrEmpty(post) ? CallBackResultEnum.FAIL.toString() : post);
 		orderDetail.setCallBackTime(currentTime);
 
-		switch (orderDetail.getCallBackCount().intValue()) {
-		case 1:
-			orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
-			break;
-		case 2:
-			orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
-			break;
-		case 3:
+		if (orderDetail.getCallBackResult().equalsIgnoreCase(CallBackResultEnum.SUCCESS.toString())) {
 			orderDetail.setNextCallBackTime(null);
-			break;
-		default:
-			break;
+		} else {
+			switch (orderDetail.getCallBackCount().intValue()) {
+			case 1:
+				orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
+				break;
+			case 2:
+				orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 15));
+				break;
+			case 3:
+				orderDetail.setNextCallBackTime(null);
+				break;
+			default:
+				orderDetail.setNextCallBackTime(null);
+				break;
+			}
 		}
 		orderDetailService.save(orderDetail);
 		ResultVo resultVo = new ResultVo(true);
