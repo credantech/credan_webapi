@@ -64,7 +64,7 @@ public class ZLJResource extends BasicResource {
 	 * 
 	 * @param params
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@POST
 	@Path("/notify")
@@ -72,5 +72,20 @@ public class ZLJResource extends BasicResource {
 		ResultVo resultVo = zLJService.notify(toJson(params));
 		return toResponse(resultVo);
 	}
+
+	/**
+	 * 跑批回调通知
+	 * 
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
+	@POST
+	@Path("/jobNotify")
+	public Response jobNotify(String params) throws Exception {
+		ResultVo resultVo = zLJService.jobNotify(params);
+		return toResponse(resultVo);
+	}
+	
 
 }

@@ -8,12 +8,12 @@ package com.credan.webapi.core.service.api.zlj;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,21 +25,30 @@ import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums;
 import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
+import com.credan.webapi.comm.util.Arith;
 import com.credan.webapi.comm.util.DateHelper;
+import com.credan.webapi.comm.util.UUIDUtils;
 import com.credan.webapi.comm.util.security.AESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
 import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
+import com.credan.webapi.config.jersey.api.entity.StatusEnum;
+import com.credan.webapi.config.jersey.api.exception.ParamException;
+import com.credan.webapi.core.dao.entity.ci.InstallmentProject;
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
 import com.credan.webapi.core.dao.entity.order.OrderDetailLog;
 import com.credan.webapi.core.dao.entity.order.OrderDetailVo;
+import com.credan.webapi.core.dao.entity.sys.SysDictionary;
 import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
 import com.credan.webapi.core.service.AbstractBasicService;
 import com.credan.webapi.core.service.app.CredanService;
+import com.credan.webapi.core.service.ci.InstallmentProjectService;
 import com.credan.webapi.core.service.order.OrderDetailLogService;
 import com.credan.webapi.core.service.order.OrderDetailService;
 import com.credan.webapi.core.service.security.SignService;
+import com.credan.webapi.core.service.sys.SysDictionaryService;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -68,9 +77,12 @@ public class ZLJService extends AbstractBasicService {
 	private RestTemplate restTemplate;
 	@Autowired
 	private SignService signService;
-	
+	@Autowired
+	private InstallmentProjectService installmentProjectService;
 	@Autowired
 	private CredanService CredanService;
+	@Autowired
+	private SysDictionaryService sysDictionaryService;
 
 	/**
 	 * 商户跳入解析数据（该接口由前端转发进入）
@@ -78,7 +90,6 @@ public class ZLJService extends AbstractBasicService {
 	 * @param param
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "static-access" })
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public ResultVo index(String params) {
 		RequestVo requestVo = signService.processInputParams(JSONObject.parseObject(params, RequestVo.class));
@@ -92,20 +103,36 @@ public class ZLJService extends AbstractBasicService {
 		Integer tenorApplied = data.getInteger("tenorApplied");
 		tenorApplied = null == tenorApplied ? 0 : tenorApplied;
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
+		try {
+			Preconditions.checkArgument(itemPrice.compareTo(BigDecimal.ZERO) > 0, "单价错误");
+		} catch (Exception e) {
+			throw new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "itemPrice");
+		}
 		Integer itemAmt = data.getInteger("itemAmt");
+		itemAmt = itemAmt < 1 ? 1 : itemAmt;
 		String itemName = data.getString("itemName");
 
 		String unit = ConstantEnums.TermUnitEnum.M.toString();
 		OrderDetail record = orderDetailDao.findOneByOrderId(orderId);
 		if (null == record) {
 			record = new OrderDetail();
+			record.setProjectId(UUIDUtils.getUUID());
+		}else {
+			InstallmentProject findOne = installmentProjectService.findOne(record.getProjectId());
+			if (null != findOne) {
+				ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "orderId");
+				paramException.setMsg("订单编号已被占用");
+				throw paramException;
+			}
 		}
+		
+		
 		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
 		record.setCount(Long.valueOf(itemAmt));
 		record.setMerchantId(merchantId);
 		record.setName(itemName);
-		record.setOrderAmount(itemPrice);
+		record.setOrderAmount(Arith.mul(itemPrice, new BigDecimal(itemAmt)));
 		record.setPrice(itemPrice);
 		record.setTerm(tenorApplied == null ? null : Long.valueOf(tenorApplied));
 		record.setUnit(unit);
@@ -121,9 +148,9 @@ public class ZLJService extends AbstractBasicService {
 		log.setTerm(Long.valueOf(tenorApplied));
 		log.setUnit(unit);
 		orderDetailLogService.save(log);
-		
+
 		Map<String, Object> resultData = CredanService.calculate(data);
-		
+
 		ResultVo resultVo = new ResultVo(true);
 		resultVo.putValue(resultData);
 		return resultVo;
@@ -162,13 +189,39 @@ public class ZLJService extends AbstractBasicService {
 	}
 
 	/**
+	 * 跑批回调
+	 * 
+	 * @param param
+	 * @return
+	 */
+	public ResultVo jobNotify(String param) {
+		List<OrderDetail> findList4Job = orderDetailDao.findList4Job();
+		if (CollectionUtils.isNotEmpty(findList4Job)) {
+			for (OrderDetail orderDetail : findList4Job) {
+				Date nextCallBackTime = orderDetail.getNextCallBackTime();
+				int compare = DateHelper.compare(DateHelper.getCurrentTime(), nextCallBackTime);
+				if (compare < 0) {
+					break;
+				}
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("projectId", orderDetail.getProjectId());
+				try {
+					notify(jsonObject);
+				} catch (Exception e) {
+					log.error("找靓机项目状态变更回调通知异常 ： ", e);
+				}
+			}
+		}
+		return new ResultVo(true);
+	}
+
+	/**
 	 * 回调通知合作方
 	 * 
 	 * @param param
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	@Transactional(readOnly = false)
 	public ResultVo notify(JSONObject param) throws Exception {
 		checkNotNull(param, "projectId");
 		String projectId = param.getString("projectId");
@@ -178,17 +231,23 @@ public class ZLJService extends AbstractBasicService {
 			log.error("notify projectId find OrderDetail is null , projectId : {}", projectId);
 			return new ResultVo(false);
 		}
+		InstallmentProject findOne = installmentProjectService.findOne(projectId);
+		String auditStatus = findOne.getAuditStatus();
+
 		JSONObject reqParam = new JSONObject();
 		reqParam.put("orderId", orderDetail.getOrderId());
 		reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
 		JSONObject ext = new JSONObject();
-		ext.put("status", "PAID");
-		ext.put("statusDesc", "审批通过已付款");
+		ext.put("status", auditStatus);
+		SysDictionary sysDictionary = sysDictionaryService.findOneByDictTypeAndDictCode("ci_product_audit_status",
+				auditStatus);
+		ext.put("statusDesc", null == sysDictionary ? "" : sysDictionary.getDictName());
 		reqParam.put("ext", ext);
-		
+
 		Map<String, Object> newHashMap = Maps.newHashMap();
-		newHashMap.put("data", AESHelper.encrypt(reqParam.toString(), appConfig.getDesKey()));
-		newHashMap.put("sign", RSAHelper.sign(newHashMap.get("data").toString(), appConfig.getPrivateKey()));
+		String encrypt = AESHelper.encrypt(reqParam.toString(), appConfig.getDesKey());
+		newHashMap.put("data", encrypt);
+		newHashMap.put("sign", RSAHelper.sign(encrypt, appConfig.getPrivateKey()));
 		newHashMap.put("timestamp", DateHelper.getDateTime());
 		String zljNotifyUrl = appConfig.getZljNotifyUrl();
 		String jsonString = JSONObject.toJSONString(newHashMap);
@@ -200,18 +259,23 @@ public class ZLJService extends AbstractBasicService {
 		orderDetail.setCallBackResult(Strings.isNullOrEmpty(post) ? CallBackResultEnum.FAIL.toString() : post);
 		orderDetail.setCallBackTime(currentTime);
 
-		switch (orderDetail.getCallBackCount().intValue()) {
-		case 1:
-			orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
-			break;
-		case 2:
-			orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
-			break;
-		case 3:
+		if (orderDetail.getCallBackResult().equalsIgnoreCase(CallBackResultEnum.SUCCESS.toString())) {
 			orderDetail.setNextCallBackTime(null);
-			break;
-		default:
-			break;
+		} else {
+			switch (orderDetail.getCallBackCount().intValue()) {
+			case 1:
+				orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 5));
+				break;
+			case 2:
+				orderDetail.setNextCallBackTime(DateHelper.addMinute(currentTime, 15));
+				break;
+			case 3:
+				orderDetail.setNextCallBackTime(null);
+				break;
+			default:
+				orderDetail.setNextCallBackTime(null);
+				break;
+			}
 		}
 		orderDetailService.save(orderDetail);
 		ResultVo resultVo = new ResultVo(true);

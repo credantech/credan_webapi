@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.comm.enums.ConstantEnums.FileClassifyEnum;
 import com.credan.webapi.comm.enums.DelFlagEnum;
-import com.credan.webapi.config.Global;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
 import com.credan.webapi.core.dao.entity.file.FileInfo;
 import com.credan.webapi.core.dao.entity.file.FileUser;
@@ -35,12 +34,13 @@ public class FileUserService extends BasicService<FileUserDao, FileUser> {
 
 	public ResultVo upload(String param) throws Exception {
 		JSONObject jsonMap = JSONObject.parseObject(param);
-		String userId = jsonMap.getString(Global.USER_ID);
+		String token = jsonMap.getString("token");
 		String file = jsonMap.getString("file");
 		String filename = jsonMap.getString("filename");
 		try {
 			Preconditions.checkArgument(StringUtils.isNotBlank(file), "上传文件不能为空");
 			Preconditions.checkArgument(StringUtils.isNotBlank(filename), "上传文件名称不能为空");
+			Preconditions.checkArgument(StringUtils.isNotBlank(token), "token不能为空");
 		} catch (Exception e) {
 			throw new ParamException(e);
 		}
@@ -50,7 +50,7 @@ public class FileUserService extends BasicService<FileUserDao, FileUser> {
 		FileInfo fileInfo = fileInfoService.upload4Base64(filename, file, handheldId);
 		FileUser fileUser = new FileUser();
 		fileUser.setType(handheldId.toString());
-		fileUser.setUserId(userId);
+		fileUser.setUserId(token);
 		FileUser fineOne = dao.findOne(fileUser);
 		if (null == fineOne) {
 			fineOne = new FileUser();
@@ -58,7 +58,7 @@ public class FileUserService extends BasicService<FileUserDao, FileUser> {
 		fineOne.setDelFlag(DelFlagEnum.FALSE.getCode());
 		fineOne.setFileId(fileInfo.getId());
 		fineOne.setType(handheldId.toString());
-		fineOne.setUserId(userId);
+		fineOne.setUserId(token);
 		fineOne.setMemo("手持身份证照片");
 		saveSelective(fineOne);
 		fileInfoService.saveSelective(fileInfo);

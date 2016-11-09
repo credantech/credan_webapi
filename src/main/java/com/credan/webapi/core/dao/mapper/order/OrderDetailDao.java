@@ -19,4 +19,11 @@ public interface OrderDetailDao extends MyBatisDao<OrderDetail> {
 	 * @return
 	 */
 	List<OrderDetailVo> findDetails(List<String> ids);
+	
+	/**
+	 * 查询需要回调通知状态变更的列表
+	 * 
+	 * @return
+	 */
+	List<OrderDetail> findList4Job();
 }

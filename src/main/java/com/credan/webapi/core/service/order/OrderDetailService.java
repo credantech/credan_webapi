@@ -7,6 +7,7 @@
 package com.credan.webapi.core.service.order;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.credan.webapi.core.dao.entity.order.OrderDetail;
 import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
@@ -21,10 +22,12 @@ import com.credan.webapi.core.service.BasicService;
 @Service
 public class OrderDetailService extends BasicService<OrderDetailDao, OrderDetail> {
 
+	@Transactional(readOnly = false)
 	public int saveSelective(OrderDetail record) {
 		return super.saveSelective(record);
 	}
 
+	@Transactional(readOnly = false)
 	public int save(OrderDetail record) {
 		return super.save(record);
 	}

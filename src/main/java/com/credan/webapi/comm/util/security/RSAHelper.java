@@ -12,11 +12,11 @@ import com.google.common.base.Charsets;
 
 public class RSAHelper {
 
-	public static String ALGORITHM = "RSA";
+	public static final String ALGORITHM = "RSA";
 
-	public static String SIGN_ALGORITHMS = "SHA1WithRSA";// 摘要加密算饭
+	public static final String SIGN_ALGORITHMS = "SHA1WithRSA";// 摘要加密算饭
 
-	public static String CHAR_SET = "UTF-8";
+	public static final String CHAR_SET = "UTF-8";
 
 	/**
 	 * 数据签名

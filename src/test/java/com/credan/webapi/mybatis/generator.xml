@@ -16,14 +16,14 @@
 			userId="credan_user" password="Credan888">
 		</jdbcConnection>
 
-		<javaModelGenerator targetPackage="com.credan.webapi.core.dao.entity.file"
+		<javaModelGenerator targetPackage="com.credan.webapi.core.dao.entity.sys"
 			targetProject="src/main/java">
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 
-		<sqlMapGenerator targetPackage="mybatis.mappers.file" targetProject="src/main/resources" />
+		<sqlMapGenerator targetPackage="mybatis.mappers.sys" targetProject="src/main/resources" />
 
-		<javaClientGenerator targetPackage="com.credan.webapi.core.dao.mapper.file"
+		<javaClientGenerator targetPackage="com.credan.webapi.core.dao.mapper.sys"
 			targetProject="src/main/java" type="XMLMAPPER" />
 
 <!-- 		<table tableName="merchant_order_detail" domainObjectName="OrderDetail"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
@@ -33,9 +33,13 @@
 <!-- 		</table> -->
 <!-- 		<table tableName="ci_merchant" domainObjectName="MerchantInfo"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
 <!-- 		</table> -->
-		<table tableName="file_info" domainObjectName="FIleInfo"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
-		</table>
-		<table tableName="file_user" domainObjectName="FileUser"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
-		</table>
+<!-- 		<table tableName="file_info" domainObjectName="FIleInfo"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
+<!-- 		</table> -->
+<!-- 		<table tableName="file_user" domainObjectName="FileUser"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
+<!-- 		</table> -->
+<!-- 		<table tableName="ci_installment_project" domainObjectName="InstallmentProject"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
+<!-- 		</table> -->
+<!-- 		<table tableName="sys_dictionary" domainObjectName="SysDictionary"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"> -->
+<!-- 		</table> -->
 	</context>
 </generatorConfiguration>
