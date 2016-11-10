@@ -117,7 +117,7 @@ public class ZLJService extends AbstractBasicService {
 		if (null == record) {
 			record = new OrderDetail();
 			record.setProjectId(UUIDUtils.getUUID());
-		}else {
+		} else {
 			InstallmentProject findOne = installmentProjectService.findOne(record.getProjectId());
 			if (null != findOne) {
 				ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "orderId");
@@ -125,8 +125,7 @@ public class ZLJService extends AbstractBasicService {
 				throw paramException;
 			}
 		}
-		
-		
+
 		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
 		record.setCount(Long.valueOf(itemAmt));
@@ -182,6 +181,16 @@ public class ZLJService extends AbstractBasicService {
 		});
 		List<OrderDetailVo> findDetails = orderDetailDao.findDetails(ids);
 		findDetails = null == findDetails ? Lists.newArrayList() : findDetails;
+		Lists.transform(findDetails, new Function<OrderDetailVo, OrderDetailVo>() {
+			@Override
+			public OrderDetailVo apply(OrderDetailVo arg0) {
+				if (Strings.isNullOrEmpty(arg0.getStatus())) {
+					arg0.setStatus("PENDING");
+					arg0.setStatusDesc("待审核");
+				}
+				return null;
+			}
+		});
 		ResultVo resultVo = new ResultVo(true);
 		resultVo.putValue("total", total);
 		resultVo.putValue("result", findDetails);
@@ -233,7 +242,13 @@ public class ZLJService extends AbstractBasicService {
 		}
 		InstallmentProject findOne = installmentProjectService.findOne(projectId);
 		String auditStatus = findOne.getAuditStatus();
-
+		// 审批拒绝和审批通过已付款的进行回调
+		if (!"REJECT".equals(auditStatus) || !"PAID".equals(auditStatus)) {
+			orderDetail.setNextCallBackTime(null);
+			orderDetail.setCount(Long.valueOf(0));
+			orderDetailService.save(orderDetail);
+			return new ResultVo(false);
+		}
 		JSONObject reqParam = new JSONObject();
 		reqParam.put("orderId", orderDetail.getOrderId());
 		reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
@@ -253,12 +268,10 @@ public class ZLJService extends AbstractBasicService {
 		String jsonString = JSONObject.toJSONString(newHashMap);
 		String post = restTemplate.postForObject(zljNotifyUrl, jsonString, String.class);
 		log.debug(" post: {}", post);
-
 		Date currentTime = DateHelper.getCurrentTime();
 		orderDetail.setCallBackCount(orderDetail.getCallBackCount() + 1);
 		orderDetail.setCallBackResult(Strings.isNullOrEmpty(post) ? CallBackResultEnum.FAIL.toString() : post);
 		orderDetail.setCallBackTime(currentTime);
-
 		if (orderDetail.getCallBackResult().equalsIgnoreCase(CallBackResultEnum.SUCCESS.toString())) {
 			orderDetail.setNextCallBackTime(null);
 		} else {
@@ -277,6 +290,7 @@ public class ZLJService extends AbstractBasicService {
 				break;
 			}
 		}
+
 		orderDetailService.save(orderDetail);
 		ResultVo resultVo = new ResultVo(true);
 		resultVo.putValue("status", post);
