@@ -32,16 +32,18 @@ public class CredanService extends AbstractBasicService {
 		Integer itemAmt = data.getInteger("itemAmt");
 		String merchantId = data.getString("merchantId");
 		String orderId = data.getString("orderId");
+		String projectId = data.getString("projectId");
 		
-		BigDecimal installment = Arith.mul(itemPrice, new BigDecimal(itemAmt));
+		BigDecimal orderAmount = Arith.mul(itemPrice, new BigDecimal(itemAmt));
 		@SuppressWarnings("static-access")
 		Map<String, Object> map = data.toJavaObject(data, Map.class);
-		Map<String, Object> installments = CalculatorUtil.getACPI(installment);
+		Map<String, Object> installments = CalculatorUtil.getACPI(orderAmount);
 		map.put("installments", installments);
+		map.put("orderAmount", orderAmount);
 		String token = UUIDUtils.getUUID();
 		MerchantUserEntity.MerchantUserEntityBuilder builder = MerchantUserEntity.builder();
-		builder.token(token).orderId(orderId).createTime(DateHelper.getCurrentTime()).installment(installment.doubleValue()).orderAmount(installment.doubleValue())
-		.merchantId(merchantId).desc("inputInfo");
+		builder.token(token).orderId(orderId).createTime(DateHelper.getCurrentTime()).installment(orderAmount.doubleValue()).orderAmount(orderAmount.doubleValue())
+		.merchantId(merchantId).desc("inputInfo").projectId(projectId);
 		MerchantUserEntity entity = builder.build();
 		merchantUserReposityService.save(entity);
 		map.put("token", token);
