@@ -101,7 +101,7 @@ public class ZLJService extends AbstractBasicService {
 
 		String orderId = data.getString("orderId");
 		Integer tenorApplied = data.getInteger("tenorApplied");
-		tenorApplied = null == tenorApplied ? 0 : tenorApplied;
+		tenorApplied = null == tenorApplied ? 1 : (tenorApplied.compareTo(0) < 0 ? 1 : tenorApplied);
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
 		try {
 			Preconditions.checkArgument(itemPrice.compareTo(BigDecimal.ZERO) > 0, "单价错误");
@@ -133,7 +133,7 @@ public class ZLJService extends AbstractBasicService {
 		record.setName(itemName);
 		record.setOrderAmount(Arith.mul(itemPrice, new BigDecimal(itemAmt)));
 		record.setPrice(itemPrice);
-		record.setTerm(tenorApplied == null ? null : Long.valueOf(tenorApplied));
+		record.setTerm(Long.valueOf(tenorApplied));
 		record.setUnit(unit);
 		orderDetailService.save(record);
 
