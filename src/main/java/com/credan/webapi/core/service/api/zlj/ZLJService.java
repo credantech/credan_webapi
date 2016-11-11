@@ -244,6 +244,7 @@ public class ZLJService extends AbstractBasicService {
 		String auditStatus = findOne.getAuditStatus();
 		// 审批拒绝和审批通过已付款的进行回调
 		if (!"REJECT".equals(auditStatus) && !"PAID".equals(auditStatus)) {
+			log.debug("notify project auditStatus is {}", auditStatus);
 			orderDetail.setNextCallBackTime(null);
 			orderDetail.setCount(Long.valueOf(0));
 			orderDetailService.save(orderDetail);
