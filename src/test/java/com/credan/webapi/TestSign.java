@@ -10,10 +10,10 @@ import com.credan.webapi.comm.util.security.RSAHelper;
 
 public class TestSign extends ApplicationTests {
 
-	@Value("${zlj_public_key}")
+	@Value("${credan_public_key}")
 	public String zljPublicKey;
 
-	@Value("${zlj_private_key}")
+	@Value("${credan_private_key}")
 	public String zljPrivateKey;
 
 	@Value("${zlj_deskey}")
