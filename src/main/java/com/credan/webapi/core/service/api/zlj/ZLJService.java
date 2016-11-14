@@ -101,7 +101,7 @@ public class ZLJService extends AbstractBasicService {
 
 		String orderId = data.getString("orderId");
 		Integer tenorApplied = data.getInteger("tenorApplied");
-		tenorApplied = null == tenorApplied ? 0 : tenorApplied;
+		tenorApplied = null == tenorApplied ? 1 : (tenorApplied.compareTo(0) < 0 ? 1 : tenorApplied);
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
 		try {
 			Preconditions.checkArgument(itemPrice.compareTo(BigDecimal.ZERO) > 0, "单价错误");
@@ -133,7 +133,7 @@ public class ZLJService extends AbstractBasicService {
 		record.setName(itemName);
 		record.setOrderAmount(Arith.mul(itemPrice, new BigDecimal(itemAmt)));
 		record.setPrice(itemPrice);
-		record.setTerm(tenorApplied == null ? null : Long.valueOf(tenorApplied));
+		record.setTerm(Long.valueOf(tenorApplied));
 		record.setUnit(unit);
 		orderDetailService.save(record);
 
@@ -243,7 +243,8 @@ public class ZLJService extends AbstractBasicService {
 		InstallmentProject findOne = installmentProjectService.findOne(projectId);
 		String auditStatus = findOne.getAuditStatus();
 		// 审批拒绝和审批通过已付款的进行回调
-		if (!"REJECT".equals(auditStatus) || !"PAID".equals(auditStatus)) {
+		if (!"REJECT".equals(auditStatus) && !"PAID".equals(auditStatus)) {
+			log.debug("notify project auditStatus is {}", auditStatus);
 			orderDetail.setNextCallBackTime(null);
 			orderDetail.setCount(Long.valueOf(0));
 			orderDetailService.save(orderDetail);
@@ -251,7 +252,11 @@ public class ZLJService extends AbstractBasicService {
 		}
 		JSONObject reqParam = new JSONObject();
 		reqParam.put("orderId", orderDetail.getOrderId());
-		reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
+		if (auditStatus.equals("REJECT")) {
+			reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.AUDIT_REJECT.getCode());
+		}else if (auditStatus.equals("PAID")) {
+			reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
+		}
 		JSONObject ext = new JSONObject();
 		ext.put("status", auditStatus);
 		SysDictionary sysDictionary = sysDictionaryService.findOneByDictTypeAndDictCode("ci_product_audit_status",
@@ -267,7 +272,7 @@ public class ZLJService extends AbstractBasicService {
 		String zljNotifyUrl = appConfig.getZljNotifyUrl();
 		String jsonString = JSONObject.toJSONString(newHashMap);
 		String post = restTemplate.postForObject(zljNotifyUrl, jsonString, String.class);
-		log.debug(" post: {}", post);
+		log.debug("找靓机 回调   post: {}", post);
 		Date currentTime = DateHelper.getCurrentTime();
 		orderDetail.setCallBackCount(orderDetail.getCallBackCount() + 1);
 		orderDetail.setCallBackResult(Strings.isNullOrEmpty(post) ? CallBackResultEnum.FAIL.toString() : post);
