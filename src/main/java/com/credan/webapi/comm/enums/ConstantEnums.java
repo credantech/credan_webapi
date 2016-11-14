@@ -37,7 +37,8 @@ public interface ConstantEnums {
 	 *
 	 */
 	public enum NotifySubTypeEnum {
-		PAID_SUCCESS("0001", "用户支付完成");
+		PAID_SUCCESS("0001", "用户支付完成"),
+		AUDIT_REJECT("0002", "审批拒绝");
 
 		private final String code;
 		private final String msg;
