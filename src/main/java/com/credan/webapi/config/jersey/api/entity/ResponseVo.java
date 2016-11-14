@@ -55,6 +55,9 @@ public class ResponseVo implements Serializable {
 
 	/** 加密签名 */
 	private String sign;
+	
+	/** 操作是否成功*/
+	private boolean isSuccess;
 
 	@Override
 	public String toString() {

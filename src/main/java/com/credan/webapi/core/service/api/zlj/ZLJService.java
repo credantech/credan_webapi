@@ -135,6 +135,7 @@ public class ZLJService extends AbstractBasicService {
 		record.setPrice(itemPrice);
 		record.setTerm(Long.valueOf(tenorApplied));
 		record.setUnit(unit);
+		record.setExt("ZHAOLIANGJI");
 		orderDetailService.save(record);
 
 		OrderDetailLog log = new OrderDetailLog();
@@ -262,6 +263,8 @@ public class ZLJService extends AbstractBasicService {
 		SysDictionary sysDictionary = sysDictionaryService.findOneByDictTypeAndDictCode("ci_product_audit_status",
 				auditStatus);
 		ext.put("statusDesc", null == sysDictionary ? "" : sysDictionary.getDictName());
+		ext.put("loanAmout", findOne.getInstallmentAmount());
+		
 		reqParam.put("ext", ext);
 
 		Map<String, Object> newHashMap = Maps.newHashMap();

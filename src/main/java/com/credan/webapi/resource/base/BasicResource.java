@@ -44,7 +44,7 @@ public abstract class BasicResource {
 		message = Strings.isNullOrEmpty(message)
 				? (vo.isSuccess() ? StatusCodeEnum.SUCCESS.getMsg() : StatusCodeEnum.FAILD.getMsg()) : message;
 		responseVo = ResponseVo.builder().data(vo.getData()).errorCode(vo.getErrorCode()).message(message)
-				.timestamp(com.credan.webapi.comm.util.DateHelper.getDateTime()).statusCode(statusCode).build();
+				.timestamp(com.credan.webapi.comm.util.DateHelper.getDateTime()).statusCode(statusCode).isSuccess(vo.isSuccess()).build();
 		return Response.status(200).entity(responseVo).build();
 	}
 
