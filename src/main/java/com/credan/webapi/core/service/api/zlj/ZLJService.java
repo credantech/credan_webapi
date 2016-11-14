@@ -117,14 +117,15 @@ public class ZLJService extends AbstractBasicService {
 		if (null == record) {
 			record = new OrderDetail();
 			record.setProjectId(UUIDUtils.getUUID());
-		} else {
-			InstallmentProject findOne = installmentProjectService.findOne(record.getProjectId());
-			if (null != findOne) {
-				ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "orderId");
-				paramException.setMsg("订单编号已被占用");
-				throw paramException;
-			}
-		}
+		} 
+//		else {
+//			InstallmentProject findOne = installmentProjectService.findOne(record.getProjectId());
+//			if (null != findOne) {
+//				ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "orderId");
+//				paramException.setMsg("订单编号已被占用");
+//				throw paramException;
+//			}
+//		}
 
 		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
