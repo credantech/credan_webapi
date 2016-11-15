@@ -352,6 +352,8 @@
 	
 	<!-- 查询job通知状态变更的数据 -->
 	<select id="findList4Job" resultMap="BaseResultMap">
+		SELECT d.* from merchant_order_detail d , ci_installment_project p where p.id = d.project_id and p.audit_status in ('PAID', 'REJECT') and d.call_back_count = 0
+		UNION all 
 		select
 		<include refid="Base_Column_List" />
 		from merchant_order_detail

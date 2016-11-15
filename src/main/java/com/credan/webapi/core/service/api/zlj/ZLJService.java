@@ -210,9 +210,11 @@ public class ZLJService extends AbstractBasicService {
 		if (CollectionUtils.isNotEmpty(findList4Job)) {
 			for (OrderDetail orderDetail : findList4Job) {
 				Date nextCallBackTime = orderDetail.getNextCallBackTime();
-				int compare = DateHelper.compare(DateHelper.getCurrentTime(), nextCallBackTime);
-				if (compare < 0) {
-					break;
+				if(null != nextCallBackTime){
+					int compare = DateHelper.compare(DateHelper.getCurrentTime(), nextCallBackTime);
+					if (compare < 0) {
+						break;
+					}
 				}
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("projectId", orderDetail.getProjectId());
