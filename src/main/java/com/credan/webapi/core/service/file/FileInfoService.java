@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.credan.webapi.comm.enums.ConstantEnums.FileClassifyEnum;
-import com.credan.webapi.comm.enums.DelFlagEnum;
 import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.FileHelper;
 import com.credan.webapi.comm.util.UUIDUtils;
@@ -66,12 +65,9 @@ public class FileInfoService extends BasicService<FileInfoDao, FileInfo> {
 		byte[] buffer = Base64.getMimeDecoder().decode(file);
 		Files.write(buffer, new File(fullUploadFileName));
 		FileInfo fileInfo = new FileInfo();
-		fileInfo.setCreatedTime(DateHelper.getCurrentTime());
-		fileInfo.setDelFlag(DelFlagEnum.FALSE.getCode());
 		fileInfo.setFilename(uploadFileName);
 		fileInfo.setFilePath(fullUploadFileName);
 		fileInfo.setFileType(fileClassifyEnum.toString());
-		fileInfo.setId(UUIDUtils.getUniqueUUID());
 		fileInfo.setOldFilename(filename);
 		return fileInfo;
 	}
