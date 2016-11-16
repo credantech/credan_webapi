@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<contextName>logback-consumer</contextName>
-	<property name="log.path" value="logs/online/online" />
+	<property name="log.path" value="logs/webapi/webapi" />
 
 	<!-- 控制台打印日志 -->
 	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
