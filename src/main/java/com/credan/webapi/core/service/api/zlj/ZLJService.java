@@ -13,7 +13,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -84,6 +83,14 @@ public class ZLJService extends AbstractBasicService {
 	@Autowired
 	private SysDictionaryService sysDictionaryService;
 
+	/** 字典表项目审批状态type */
+	private static final String CI_PRODUCT_AUDIT_STATUS = "ci_product_audit_status";
+
+	/** 项目表审批拒绝状态 */
+	private static final String AUDIT_STATUS_REJECT = "REJECT";
+	/** 项目表已支付状态 */
+	private static final String AUDIT_STATUS_PAID = "PAID";
+
 	/**
 	 * 商户跳入解析数据（该接口由前端转发进入）
 	 * 
@@ -117,15 +124,15 @@ public class ZLJService extends AbstractBasicService {
 		if (null == record) {
 			record = new OrderDetail();
 			record.setProjectId(UUIDUtils.getUUID());
-		} 
-//		else {
-//			InstallmentProject findOne = installmentProjectService.findOne(record.getProjectId());
-//			if (null != findOne) {
-//				ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "orderId");
-//				paramException.setMsg("订单编号已被占用");
-//				throw paramException;
-//			}
-//		}
+		} else {
+			InstallmentProject findOne = installmentProjectService.findOne(record.getProjectId());
+			if (null != findOne && (AUDIT_STATUS_PAID.equals(findOne.getAuditStatus())
+					|| AUDIT_STATUS_REJECT.equals(findOne.getAuditStatus()))) {
+				ParamException paramException = new ParamException(StatusEnum.PROPERTY_LENGTH_ERROR, "orderId");
+				paramException.setMsg("订单已被处理，请勿重新操作");
+				throw paramException;
+			}
+		}
 
 		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
@@ -207,10 +214,10 @@ public class ZLJService extends AbstractBasicService {
 	 */
 	public ResultVo jobNotify(String param) {
 		List<OrderDetail> findList4Job = orderDetailDao.findList4Job();
-		if (CollectionUtils.isNotEmpty(findList4Job)) {
+		if (null != findList4Job) {
 			for (OrderDetail orderDetail : findList4Job) {
 				Date nextCallBackTime = orderDetail.getNextCallBackTime();
-				if(null != nextCallBackTime){
+				if (null != nextCallBackTime) {
 					int compare = DateHelper.compare(DateHelper.getCurrentTime(), nextCallBackTime);
 					if (compare < 0) {
 						break;
@@ -247,7 +254,7 @@ public class ZLJService extends AbstractBasicService {
 		InstallmentProject findOne = installmentProjectService.findOne(projectId);
 		String auditStatus = findOne.getAuditStatus();
 		// 审批拒绝和审批通过已付款的进行回调
-		if (!"REJECT".equals(auditStatus) && !"PAID".equals(auditStatus)) {
+		if (!AUDIT_STATUS_REJECT.equals(auditStatus) && !AUDIT_STATUS_PAID.equals(auditStatus)) {
 			log.debug("notify project auditStatus is {}", auditStatus);
 			orderDetail.setNextCallBackTime(null);
 			orderDetail.setCount(Long.valueOf(0));
@@ -256,18 +263,18 @@ public class ZLJService extends AbstractBasicService {
 		}
 		JSONObject reqParam = new JSONObject();
 		reqParam.put("orderId", orderDetail.getOrderId());
-		if (auditStatus.equals("REJECT")) {
+		if (auditStatus.equals(AUDIT_STATUS_REJECT)) {
 			reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.AUDIT_REJECT.getCode());
-		}else if (auditStatus.equals("PAID")) {
+		} else if (auditStatus.equals(AUDIT_STATUS_PAID)) {
 			reqParam.put("subType", ConstantEnums.NotifySubTypeEnum.PAID_SUCCESS.getCode());
 		}
 		JSONObject ext = new JSONObject();
 		ext.put("status", auditStatus);
-		SysDictionary sysDictionary = sysDictionaryService.findOneByDictTypeAndDictCode("ci_product_audit_status",
+		SysDictionary sysDictionary = sysDictionaryService.findOneByDictTypeAndDictCode(CI_PRODUCT_AUDIT_STATUS,
 				auditStatus);
 		ext.put("statusDesc", null == sysDictionary ? "" : sysDictionary.getDictName());
 		ext.put("loanAmout", findOne.getInstallmentAmount());
-		
+
 		reqParam.put("ext", ext);
 
 		Map<String, Object> newHashMap = Maps.newHashMap();
