@@ -66,13 +66,4 @@ public interface ConstantEnums {
 	public enum SwitchEnum {
 		ENABLED, DISABLE;
 	}
-	/**
-	 * 
-	 * @author Mond
-	 *
-	 */
-	public enum FileClassifyEnum{
-		//手持身份证
-		HANDHELD_ID;
-	}
 }
