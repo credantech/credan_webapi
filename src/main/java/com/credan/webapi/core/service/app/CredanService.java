@@ -40,7 +40,7 @@ public class CredanService extends AbstractBasicService {
 		Map<String, Object> installments = CalculatorUtil.getACPI(orderAmount);
 		map.put("installments", installments);
 		map.put("orderAmount", orderAmount);
-		String token = UUIDUtils.getUUID();
+		String token = "token_"+UUIDUtils.getUUID();
 		MerchantUserEntity.MerchantUserEntityBuilder builder = MerchantUserEntity.builder();
 		builder.token(token).orderId(orderId).createTime(DateHelper.getCurrentTime()).installment(orderAmount.doubleValue()).orderAmount(orderAmount.doubleValue())
 		.merchantId(merchantId).desc("inputInfo").projectId(projectId);
