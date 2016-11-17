@@ -55,13 +55,13 @@ public class FileUserService extends BasicService<FileUserDao, FileUser> {
 		if (null == fineOne) {
 			fineOne = new FileUser();
 		}
+		fileInfoService.saveSelective(fileInfo);
 		fineOne.setDelFlag(DelFlagEnum.FALSE.getCode());
 		fineOne.setFileId(fileInfo.getId());
 		fineOne.setType(handheldId.toString());
 		fineOne.setUserId(token);
 		fineOne.setMemo("手持身份证照片");
 		saveSelective(fineOne);
-		fileInfoService.saveSelective(fileInfo);
 		ResultVo resultVo = new ResultVo(true);
 		return resultVo;
 	}

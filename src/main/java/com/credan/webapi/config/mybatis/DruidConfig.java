@@ -30,7 +30,7 @@ public class DruidConfig {
 		// reg.addInitParameter("allow", "127.0.0.1"); //白名单
 		// reg.addInitParameter("deny",""); //黑名单
 		reg.addInitParameter("loginUsername", "admin");
-		reg.addInitParameter("loginPassword", "admin");
+		reg.addInitParameter("loginPassword", "credan88");
 		return reg;
 	}
 
