@@ -4,7 +4,7 @@
  * Copyright (c) 2016, Credan(上海)-版权所有
  * 
  */
-package com.credan.webapi.core.service.api.zlj;
+package com.credan.webapi.core.service.api;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -62,7 +62,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class ZLJService extends AbstractBasicService {
+public class ZhaoLiangJiService extends AbstractBasicService {
 
 	@Autowired
 	private OrderDetailService orderDetailService;

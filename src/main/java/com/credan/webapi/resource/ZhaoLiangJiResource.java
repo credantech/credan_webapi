@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.credan.webapi.comm.ResultVo;
 import com.credan.webapi.config.jersey.api.annotation.EncryptAnnotation;
-import com.credan.webapi.core.service.api.zlj.ZLJService;
+import com.credan.webapi.core.service.api.ZhaoLiangJiService;
 import com.credan.webapi.resource.base.BasicResource;
 
 /**
@@ -27,10 +27,10 @@ import com.credan.webapi.resource.base.BasicResource;
  */
 @Path("/v1/zlj")
 @Produces(MediaType.APPLICATION_JSON)
-public class ZLJResource extends BasicResource {
+public class ZhaoLiangJiResource extends BasicResource {
 
 	@Autowired
-	private ZLJService zLJService;
+	private ZhaoLiangJiService zLJService;
 
 	/**
 	 * 商户跳入请求(该接口由前端转发进入)

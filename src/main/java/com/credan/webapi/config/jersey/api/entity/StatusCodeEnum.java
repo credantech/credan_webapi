@@ -19,6 +19,8 @@ public enum StatusCodeEnum {
 	WRONG_PARAM("7000","参数错误或格式异常"),
 	FILE_UPLODED("7007","上传完成"),
 	FILE_UNUPLODED("7008","上传失败"),
+	GENERATE_TOKEN_SUCCESS("7100","生成Token成功"),
+	GENERATE_TOKEN_FAIL("7101","生成Token失败"),
 	;
 
 	private final String code;
