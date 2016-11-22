@@ -157,5 +157,9 @@ public class OrderDetail extends BasicEntity {
 	 * @mbg.generated Wed Nov 02 17:31:16 CST 2016
 	 */
 	private Long version;
+	
+	private String userId;
+	private String token;
+	private String source;
 
 }

@@ -109,5 +109,9 @@ public class OrderDetailLog extends BasicEntity {
 	 * @mbg.generated Thu Nov 03 11:34:05 CST 2016
 	 */
 	private String ext;
+	
+	private String userId;
+	private String token;
+	private String source;
 
 }

@@ -27,7 +27,7 @@ public class CredanService extends AbstractBasicService {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> calculate(JSONObject data) {
+	public Map<String, Object> calculate(JSONObject data, String token) {
 		BigDecimal itemPrice = data.getBigDecimal("itemPrice");
 		Integer itemAmt = data.getInteger("itemAmt");
 		String merchantId = data.getString("merchantId");
@@ -40,7 +40,7 @@ public class CredanService extends AbstractBasicService {
 		Map<String, Object> installments = CalculatorUtil.getACPI(orderAmount);
 		map.put("installments", installments);
 		map.put("orderAmount", orderAmount);
-		String token = "token_" + UUIDUtils.getUUID();
+		merchantUserReposityService.delete(MerchantUserEntity.builder().token(token).build());
 		MerchantUserEntity.MerchantUserEntityBuilder builder = MerchantUserEntity.builder();
 		builder.token(token).orderId(orderId).createTime(DateHelper.getCurrentTime())
 				.installment(orderAmount.doubleValue()).orderAmount(orderAmount.doubleValue()).merchantId(merchantId)
