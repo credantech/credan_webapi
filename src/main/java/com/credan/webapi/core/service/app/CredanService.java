@@ -40,13 +40,16 @@ public class CredanService extends AbstractBasicService {
 		Map<String, Object> installments = CalculatorUtil.getACPI(orderAmount);
 		map.put("installments", installments);
 		map.put("orderAmount", orderAmount);
-		merchantUserReposityService.delete(MerchantUserEntity.builder().token(token).build());
-		MerchantUserEntity.MerchantUserEntityBuilder builder = MerchantUserEntity.builder();
-		builder.token(token).orderId(orderId).createTime(DateHelper.getCurrentTime())
-				.installment(orderAmount.doubleValue()).orderAmount(orderAmount.doubleValue()).merchantId(merchantId)
-				.desc("inputInfo").projectId(projectId);
-		MerchantUserEntity entity = builder.build();
-		merchantUserReposityService.save(entity);
+		MerchantUserEntity oldEntity = merchantUserReposityService.findOneByToken(token);
+		if(null == oldEntity){
+			MerchantUserEntity.MerchantUserEntityBuilder builder = MerchantUserEntity.builder();
+			builder.token(token).orderId(orderId).createTime(DateHelper.getCurrentTime())
+			.installment(orderAmount.doubleValue()).orderAmount(orderAmount.doubleValue()).merchantId(merchantId)
+			.desc("inputInfo").projectId(projectId);
+			oldEntity = builder.build();
+			merchantUserReposityService.save(oldEntity);
+		}
+		
 		map.put("token", token);
 		return map;
 	}

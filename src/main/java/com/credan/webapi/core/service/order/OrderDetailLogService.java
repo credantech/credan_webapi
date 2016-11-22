@@ -21,8 +21,8 @@ import com.credan.webapi.core.service.BasicService;
 @Service
 public class OrderDetailLogService extends BasicService<OrderDetailLogDao, OrderDetailLog> {
 
-	public int save(OrderDetailLog log) {
-		return super.save(log);
+	public int saveSelective(OrderDetailLog log) {
+		return super.saveSelective(log);
 	}
 
 }
