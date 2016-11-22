@@ -21,5 +21,7 @@ public interface UserSessionRepository extends MongoRepository<UserSessionEntity
 	public UserSessionEntity findOneByAuthorization(String authorization);
 	
 	public UserSessionEntity findOneByUserId(String userId);
+	
+	
 
 }

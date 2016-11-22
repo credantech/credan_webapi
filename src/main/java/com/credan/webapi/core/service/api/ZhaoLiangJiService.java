@@ -163,7 +163,7 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		log.setSource("ZHAOLIANGJI");
 		log.setToken(record.getToken());
 		log.setUserId(record.getUserId());
-		orderDetailLogService.save(log);
+		orderDetailLogService.saveSelective(log);
 		data.put("projectId", record.getProjectId());
 		Map<String, Object> resultData = CredanService.calculate(data, token);
 
