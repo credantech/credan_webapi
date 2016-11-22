@@ -133,7 +133,7 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 				throw paramException;
 			}
 		}
-
+		String token = record.getToken();
 		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
 		record.setCount(Long.valueOf(itemAmt));
@@ -144,6 +144,11 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		record.setTerm(Long.valueOf(tenorApplied));
 		record.setUnit(unit);
 		record.setExt("ZHAOLIANGJI");
+		record.setSource("ZHAOLIANGJI");
+		if (Strings.isNullOrEmpty(token)) {
+			token = "token_"+org.apache.commons.codec.digest.DigestUtils.md5Hex(orderId);
+			record.setToken(token);
+		}
 		orderDetailService.save(record);
 
 		OrderDetailLog log = new OrderDetailLog();
@@ -155,9 +160,12 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		log.setPrice(itemPrice);
 		log.setTerm(Long.valueOf(tenorApplied));
 		log.setUnit(unit);
+		log.setSource("ZHAOLIANGJI");
+		log.setToken(record.getToken());
+		log.setUserId(record.getUserId());
 		orderDetailLogService.save(log);
 		data.put("projectId", record.getProjectId());
-		Map<String, Object> resultData = CredanService.calculate(data);
+		Map<String, Object> resultData = CredanService.calculate(data, token);
 
 		ResultVo resultVo = new ResultVo(true);
 		resultVo.putValue(resultData);
