@@ -36,5 +36,8 @@ public class AppConfig {
 	/**找靓机回调URL*/
 	@Value("${zlj.notify.url}")
 	private String zljNotifyUrl;
+	/**项目配置*/
+	@Value("${spring.profiles.active}")
+	private String springProfilesActive;
 
 }

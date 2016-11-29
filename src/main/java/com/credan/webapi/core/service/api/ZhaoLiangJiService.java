@@ -99,8 +99,14 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 	 */
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public ResultVo index(String params) {
-		RequestVo requestVo = signService.processInputParams(JSONObject.parseObject(params, RequestVo.class));
-		JSONObject param = JSONObject.parseObject(requestVo.toString());
+		RequestVo requestVo = JSONObject.parseObject(params, RequestVo.class);
+		JSONObject param = null;
+		if ("uat".equalsIgnoreCase(appConfig.getSpringProfilesActive()) && "0".equals(requestVo.getTxnCode())) {
+			param = JSONObject.parseObject(params);
+		} else {
+			requestVo = signService.processInputParams(requestVo);
+			param = JSONObject.parseObject(requestVo.toString());
+		}
 		checkNotNull(param, "merchantId", "data");
 		String merchantId = param.getString("merchantId");
 		JSONObject data = param.getJSONObject("data");
@@ -133,7 +139,7 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 				throw paramException;
 			}
 		}
-		JSONObject extJson = new  JSONObject();
+		JSONObject extJson = new JSONObject();
 		extJson.put("recipientProvince", data.getString("recipientProvince"));
 		extJson.put("recipientCity", data.getString("recipientCity"));
 		extJson.put("recipientDistrict", data.getString("recipientDistrict"));
@@ -153,7 +159,7 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		record.setExt(extJson.toString());
 		record.setSource("ZHAOLIANGJI");
 		if (Strings.isNullOrEmpty(token)) {
-			token = "token_"+org.apache.commons.codec.digest.DigestUtils.md5Hex(orderId);
+			token = "token_" + org.apache.commons.codec.digest.DigestUtils.md5Hex(orderId);
 			record.setToken(token);
 		}
 		orderDetailService.save(record);
@@ -173,7 +179,8 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		log.setExt(extJson.toString());
 		orderDetailLogService.saveSelective(log);
 		data.put("projectId", record.getProjectId());
-		data.putAll(extJson);;
+		data.putAll(extJson);
+		;
 		Map<String, Object> resultData = CredanService.calculate(data, token);
 
 		ResultVo resultVo = new ResultVo(true);
