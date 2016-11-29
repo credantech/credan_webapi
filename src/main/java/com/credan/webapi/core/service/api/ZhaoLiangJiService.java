@@ -133,6 +133,13 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 				throw paramException;
 			}
 		}
+		JSONObject extJson = new  JSONObject();
+		extJson.put("recipientProvince", data.getString("recipientProvince"));
+		extJson.put("recipientCity", data.getString("recipientCity"));
+		extJson.put("recipientDistrict", data.getString("recipientDistrict"));
+		extJson.put("recipientName", data.getString("recipientName"));
+		extJson.put("recipientPhone", data.getString("recipientPhone"));
+		extJson.put("recipientAddr", data.getString("recipientAddr"));
 		String token = record.getToken();
 		record.setCallBackCount(Long.valueOf("0"));
 		record.setOrderId(orderId);
@@ -143,7 +150,7 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		record.setPrice(itemPrice);
 		record.setTerm(Long.valueOf(tenorApplied));
 		record.setUnit(unit);
-		record.setExt("ZHAOLIANGJI");
+		record.setExt(extJson.toString());
 		record.setSource("ZHAOLIANGJI");
 		if (Strings.isNullOrEmpty(token)) {
 			token = "token_"+org.apache.commons.codec.digest.DigestUtils.md5Hex(orderId);
@@ -163,8 +170,10 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		log.setSource("ZHAOLIANGJI");
 		log.setToken(record.getToken());
 		log.setUserId(record.getUserId());
+		log.setExt(extJson.toString());
 		orderDetailLogService.saveSelective(log);
 		data.put("projectId", record.getProjectId());
+		data.putAll(extJson);;
 		Map<String, Object> resultData = CredanService.calculate(data, token);
 
 		ResultVo resultVo = new ResultVo(true);
