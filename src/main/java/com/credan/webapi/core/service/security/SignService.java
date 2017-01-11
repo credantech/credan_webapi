@@ -3,6 +3,8 @@ package com.credan.webapi.core.service.security;
 import java.text.ParseException;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.security.AESHelper;
 import com.credan.webapi.comm.util.security.RSAHelper;
+import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
@@ -34,6 +37,8 @@ public class SignService extends AbstractBasicService {
 
 	@Autowired
 	protected MerchantInfoService merchantInfoService;
+	@Inject
+	private AppConfig appConfig;
 
 	public RequestVo processInputParams(RequestVo requestVo) {
 		JSONObject params = JSONObject.parseObject(requestVo.toString());
@@ -57,7 +62,11 @@ public class SignService extends AbstractBasicService {
 
 		boolean verify = false;
 		try {
-			verify = RSAHelper.verify(data, merchantPublicKey, sign);
+			if("uat".equalsIgnoreCase(appConfig.getSpringProfilesActive())){
+				verify = RSAHelper.verify(data, appConfig.getPublicKey(), sign);
+			}else{
+				verify = RSAHelper.verify(data, merchantPublicKey, sign);
+			}
 		} catch (Exception e) {
 			log.error("RSA验签异常 ======", e);
 			throw new ParamException(StatusEnum.INVALID_SIGN);

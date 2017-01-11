@@ -101,12 +101,8 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 	public ResultVo index(String params) {
 		RequestVo requestVo = JSONObject.parseObject(params, RequestVo.class);
 		JSONObject param = null;
-		if ("uat".equalsIgnoreCase(appConfig.getSpringProfilesActive()) && "0".equals(requestVo.getTxnCode())) {
-			param = JSONObject.parseObject(params);
-		} else {
-			requestVo = signService.processInputParams(requestVo);
-			param = JSONObject.parseObject(requestVo.toString());
-		}
+		requestVo = signService.processInputParams(requestVo);
+		param = JSONObject.parseObject(requestVo.toString());
 		checkNotNull(param, "merchantId", "data");
 		String merchantId = param.getString("merchantId");
 		JSONObject data = param.getJSONObject("data");
