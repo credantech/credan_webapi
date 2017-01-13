@@ -21,21 +21,6 @@ import lombok.Getter;
 @Getter
 public class AppConfig {
 
-	/**私钥*/
-	@Value("${credan_private_key}")
-	private String privateKey;
-
-	/**公钥*/
-	@Value("${credan_public_key}")
-	private String publicKey;
-
-	/**DES密钥*/
-	@Value("${credan_deskey}")
-	private String desKey;
-	
-	/**找靓机回调URL*/
-	@Value("${zlj.notify.url}")
-	private String zljNotifyUrl;
 	/**项目配置*/
 	@Value("${spring.profiles.active}")
 	private String springProfilesActive;

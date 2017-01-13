@@ -21,7 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
-import com.credan.webapi.core.service.security.SignService;
+import com.credan.webapi.core.service.conf.security.DecryptRequestService;
 import com.google.common.base.Charsets;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DecryptProcessor implements ContainerRequestFilter {
 
 	@Autowired
-	private SignService signService;
+	private DecryptRequestService decryptRequestService;
 
 	@Override
 	public void filter(ContainerRequestContext arg0) throws IOException {
@@ -51,7 +51,7 @@ public class DecryptProcessor implements ContainerRequestFilter {
 			log.error("请求参数转换JSON异常 ", e);
 			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
 		}
-		requestParam = signService.processInputParams(requestParam);
+		requestParam = decryptRequestService.processInputParams(requestParam);
 		InputStream inputStream = new ByteArrayInputStream(requestParam.toString().getBytes(Charsets.UTF_8));
 		arg0.setEntityStream(inputStream);
 	}

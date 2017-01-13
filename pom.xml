@@ -132,6 +132,10 @@
 			<version>1.9</version>
 		</dependency>
 		<!--THE END -->
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+		</dependency>
 	</dependencies>
 
 	<repositories>

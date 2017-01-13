@@ -22,7 +22,7 @@ import com.credan.webapi.config.Global;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.config.jersey.api.entity.ResponseVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
-import com.credan.webapi.core.service.security.EncryptResponseService;
+import com.credan.webapi.core.service.conf.security.EncryptResponseService;
 import com.google.common.base.Strings;
 
 import lombok.extern.slf4j.Slf4j;

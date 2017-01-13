@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,9 +25,6 @@ import com.credan.webapi.comm.enums.ConstantEnums.CallBackResultEnum;
 import com.credan.webapi.comm.util.Arith;
 import com.credan.webapi.comm.util.DateHelper;
 import com.credan.webapi.comm.util.UUIDUtils;
-import com.credan.webapi.comm.util.security.AESHelper;
-import com.credan.webapi.comm.util.security.RSAHelper;
-import com.credan.webapi.config.AppConfig;
 import com.credan.webapi.config.jersey.api.entity.RequestVo;
 import com.credan.webapi.config.jersey.api.entity.StatusEnum;
 import com.credan.webapi.config.jersey.api.exception.ParamException;
@@ -42,15 +37,15 @@ import com.credan.webapi.core.dao.mapper.order.OrderDetailDao;
 import com.credan.webapi.core.service.AbstractBasicService;
 import com.credan.webapi.core.service.app.CredanService;
 import com.credan.webapi.core.service.ci.InstallmentProjectService;
+import com.credan.webapi.core.service.conf.security.DecryptRequestService;
+import com.credan.webapi.core.service.conf.security.EncryptResponseService;
 import com.credan.webapi.core.service.order.OrderDetailLogService;
 import com.credan.webapi.core.service.order.OrderDetailService;
-import com.credan.webapi.core.service.security.SignService;
 import com.credan.webapi.core.service.sys.SysDictionaryService;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -70,18 +65,18 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 	private OrderDetailLogService orderDetailLogService;
 	@Autowired
 	private OrderDetailDao orderDetailDao;
-	@Inject
-	private AppConfig appConfig;
 	@Autowired
 	private RestTemplate restTemplate;
 	@Autowired
-	private SignService signService;
+	private DecryptRequestService decryptRequestService;
 	@Autowired
 	private InstallmentProjectService installmentProjectService;
 	@Autowired
 	private CredanService CredanService;
 	@Autowired
 	private SysDictionaryService sysDictionaryService;
+	@Autowired
+	private EncryptResponseService encryptResponseService;
 
 	/** 字典表项目审批状态type */
 	private static final String CI_PRODUCT_AUDIT_STATUS = "ci_product_audit_status";
@@ -99,9 +94,15 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 	 */
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public ResultVo index(String params) {
-		RequestVo requestVo = JSONObject.parseObject(params, RequestVo.class);
+		RequestVo requestVo = null;
+		try {
+			requestVo = JSONObject.parseObject(params, RequestVo.class);
+		} catch (Exception e) {
+			log.error("时间格式异常======", e);
+			throw new ParamException(StatusEnum.PARAM_FORMAT_ERROR);
+		}
 		JSONObject param = null;
-		requestVo = signService.processInputParams(requestVo);
+		requestVo = decryptRequestService.processInputParams(requestVo);
 		param = JSONObject.parseObject(requestVo.toString());
 		checkNotNull(param, "merchantId", "data");
 		String merchantId = param.getString("merchantId");
@@ -296,15 +297,11 @@ public class ZhaoLiangJiService extends AbstractBasicService {
 		ext.put("loanAmout", findOne.getInstallmentAmount());
 
 		reqParam.put("ext", ext);
+		reqParam.put("merchantId", orderDetail.getMerchantId());
 
-		Map<String, Object> newHashMap = Maps.newHashMap();
-		String encrypt = AESHelper.encrypt(reqParam.toString(), appConfig.getDesKey());
-		newHashMap.put("data", encrypt);
-		newHashMap.put("sign", RSAHelper.sign(encrypt, appConfig.getPrivateKey()));
-		newHashMap.put("timestamp", DateHelper.getDateTime());
-		String zljNotifyUrl = appConfig.getZljNotifyUrl();
-		String jsonString = JSONObject.toJSONString(newHashMap);
-		String post = restTemplate.postForObject(zljNotifyUrl, jsonString, String.class);
+		JSONObject warpResponse = encryptResponseService.warpResponse(reqParam);
+		String post = restTemplate.postForObject(warpResponse.getString("notifyUrl"), warpResponse.toJSONString(),
+				String.class);
 		log.debug("找靓机 回调   post: {}", post);
 		Date currentTime = DateHelper.getCurrentTime();
 		orderDetail.setCallBackCount(orderDetail.getCallBackCount() + 1);
