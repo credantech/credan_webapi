@@ -24,5 +24,8 @@ public class AppConfig {
 	/**项目配置*/
 	@Value("${spring.profiles.active}")
 	private String springProfilesActive;
+	
+	@Value("${connect_time}")
+	private int connetTime;
 
 }
